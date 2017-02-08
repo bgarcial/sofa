@@ -21,8 +21,24 @@ else
     usage; exit 1
 fi
 
+echo "Working directory: "$src_dir 
+
+doClone=0
+if [ -d $src_dir ]; then
+	echo "Check this is a git repository pointing to sofa framework."
+	if git status > /dev/null ; then 
+		echo "IN"
+		doClone=0
+	else
+		echo "OUT"
+		doClone=1
+	fi
+else
+	doClone=1
+fi
+
 ### Clone the git repository 
-if [ ! -d $src_dir ]; then
+if (( doClone == 1 )); then
     echo "Creating a new repository at: "$src_dir
     git clone https://github.com/sofa-framework/sofa.git $src_dir
     
