@@ -48,7 +48,9 @@ for file in `ls -cr $builds_dir` ; do
 		#freeed=$(($freeed + $sf))	    
 	fi
     fi
-    #echo "Saved: $freeed"
-    #declare -i fs=`du -s $builds_dir | cut -d$'\t' -f1` 
 done
+if ((availablespace < neededspace)); then
+	echo "Unable to free enough space. Please report the problem to ci@sofa-framework.org"
+fi
+
 
