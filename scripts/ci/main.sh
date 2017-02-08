@@ -3,6 +3,36 @@
 
 # Messy main script that glues the other ones together.
 
+## Significant environnement variables:
+# - JOB_NAME             name of the jenkin's job that launch the script  
+# - CI_DASHBOARD_URL     url of the dashboard
+# - sha                 
+# - CI_PLATFORM
+# - CI_COMPILER
+# - CI_OPTIONS
+# - CI_TEST_SCENES
+
+# - CI_JOB                    (e.g. ubuntu_gcc-4.8_options)
+# - CI_OPTIONS                if contains "options" then activate plugins
+# - CI_CMAKE_OPTIONS          (additional arguments to pass to cmake)
+# - CI_ARCH = x86 | amd64     (for Windows builds)
+# - CI_BUILD_TYPE             Debug|Release
+# - CC and CXX
+# - CI_COMPILER               # important for Visual Studio paths (VS-2012, VS-2013 or VS-2015)
+# About available libraries:
+# - CI_HAVE_BOOST
+# - CI_BOOST_PATH             (empty string if installed in standard location)
+# - CI_QT_PATH
+# - CI_BULLET_DIR             (Path to the directory containing BulletConfig.cmake)
+# - CI_HAVE_ASSIMP
+# - CI_HAVE_OPENCASCADE
+# - CI_HAVE_CUDA
+# - CI_HAVE_OPENCL
+# - CI_HAVE_CSPARSE
+# - CI_HAVE_METIS
+
+# - CI_MAKE_OPTIONS            # additional arguments to pass to make (eg: -j1 or -j2 for windows
+
 
 # Exit on error
 set -o errexit
