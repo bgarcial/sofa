@@ -59,7 +59,7 @@ rm -rf "$build_dir/lib/*"
 
 ### Check if the disk have enough space for a new build. Otherwise do some cleaning
 ### By removing the old builds. 
-"./sofa/scripts/ci/clean-old-dir.sh" "$build_root" "$build_dir" 20 30
+"./sofa/scripts/ci/clean-old-dir.sh" "$build_root" "$build_dir" 15 20
 
 "./sofa/scripts/ci/init-src.sh" "$src_dir" "$build_commit" "$src_commit" 
 
