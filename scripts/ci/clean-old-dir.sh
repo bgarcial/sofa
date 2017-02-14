@@ -15,7 +15,6 @@ usage() {
 }
 
 toGB=$((1024*1024*1024))
-toGB=$((1024))
 
 if [[ "$#" = 4 ]]; then
     builds_dir="$1"
@@ -42,15 +41,15 @@ if [[ -d "$current_dir" ]]; then
 fi
 
 echo "Building in: '"$builds_dir"'"
-echo "- allocated space: "$allocatedspace" Gb"
-echo "- currentsize    : "$spaceused" Gb"
+echo "- allocated space: "$allocatedspace" KB"
+echo "- currentsize    : "$spaceused" KB"
 
 availablespace=$(($allocatedspace-$spaceused)) 
 if ((availablespace < 0)); then
 	availablespace=0
 fi
-echo "- available space: "$availablespace" Gb"
-echo "- needed space   : "$neededspace" Gb"
+echo "- available space: "$availablespace" KB"
+echo "- needed space   : "$neededspace" KB"
     		
 freeed=0
 for file in `ls -cr $builds_dir` ; do
@@ -62,7 +61,7 @@ for file in `ls -cr $builds_dir` ; do
      		thisdirspace=`du -s $dir | cut -d$'\t' -f1`
     		availablespace=$(($allocatedspace-$realspaceused)) 
    		if ((availablespace <= neededspace)); then
-  		  	echo "Remove directory: $dir of "$realspaceused" Gb"
+  		  	echo "Remove directory: $dir of "$realspaceused" KB"
     			rm -rf $dir
 		fi
 	fi
@@ -73,7 +72,7 @@ done
 realspaceused=`du -s $builds_dir | cut -d$'\t' -f1`
 availablespace=$(($allocatedspace-$realspaceused))     		
 
-echo "- free space     : "$availablespace" Gb"
+echo "- free space     : "$availablespace" KB"
 if ((availablespace < neededspace)); then
 	echo "Unable to free enough space. Please report the problem to ci@sofa-framework.org"
 fi
