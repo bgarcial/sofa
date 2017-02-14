@@ -17,11 +17,6 @@ usage() {
     echo "Usage: init.sh <build-dir> <src-dir>"
 }
 
-#if [ ! -d "/j/job_VS-2015_options/" ]; then
-#   cmd //c "mklink /D j:\job_VS-2015_options j:\jenkins\workspace\\$JOB_NAME"
-#fi 
-#cd /j/job_VS-2015_options/
-
 
 if [[ "$#" = 2 ]]; then
     build_dir="$1"
