@@ -39,20 +39,19 @@ set -o errexit
 
 ### Checks
 usage() {
-    echo "Usage: main.sh <build-dir> <src-dir> <build-commit> <src-commit> <compilation_env>"
+    echo "Usage: main.sh <build-dir> <src-dir> <build-commit> <src-commit>"
 }
 
-if [[ "$#" = 5 ]]; then
+if [[ "$#" = 4 ]]; then
     build_dir="$1"
     src_dir="$2"
     build_commit="$3"
     src_commit="$4"
-    compilation_env="$5"
 else
     usage; exit 1
 fi
 
-build_root=`$build_dir`
+build_root=`dirname $build_dir`
 
 ### First clean the existing build directories if they exists.  
 rm -rf "$build_dir/bin/*"
@@ -60,7 +59,7 @@ rm -rf "$build_dir/lib/*"
 
 ### Check if the disk have enough space for a new build. Otherwise do some cleaning
 ### By removing the old builds. 
-"./sofa/scripts/ci/clean-old-dir.sh" "$buil_root" 3 15
+"./sofa/scripts/ci/clean-old-dir.sh" "$build_root" "$build_dir" 20 30
 
 "./sofa/scripts/ci/init-src.sh" "$src_dir" "$build_commit" "$src_commit" 
 
