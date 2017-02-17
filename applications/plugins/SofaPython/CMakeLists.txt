@@ -122,7 +122,7 @@ set(PYTHON_FILES
 )
 
 
-find_package(PythonLibs 2.7 REQUIRED)
+find_package(PythonLibs 3.0 REQUIRED)
 sofa_create_target(PythonLibs SofaPython "${PYTHON_LIBRARIES}" "${PYTHON_INCLUDE_DIRS}")
 find_package(SofaGui REQUIRED)
 find_package(SofaGeneral REQUIRED)
