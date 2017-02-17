@@ -117,7 +117,7 @@ extern "C" PyObject * Node_getChild(PyObject * self, PyObject * args, PyObject *
         {
             PyObject *key = PyList_GetItem(keys,i);
             PyObject *value = PyList_GetItem(values,i);
-            if( !strcmp(PyString_AsString(key),"warning") )
+            if( !strcmp(PyUnicode_AsUTF8(key),"warning") )
             {
                 if PyBool_Check(value)
                     warning = (value==Py_True);
@@ -185,7 +185,7 @@ extern "C" PyObject * Node_getPathName(PyObject * self, PyObject * /*args*/)
     // BaseNode is not bound in SofaPython, so getPathName is bound in Node instead
     Node* node=down_cast<Node>(((PySPtr<Base>*)self)->object->toBaseNode());
 
-    return PyString_FromString(node->getPathName().c_str());
+    return PyUnicode_FromString(node->getPathName().c_str());
 }
 
 extern "C" PyObject * Node_getRootPath(PyObject * self, PyObject * /*args*/)
@@ -193,14 +193,14 @@ extern "C" PyObject * Node_getRootPath(PyObject * self, PyObject * /*args*/)
     // BaseNode is not bound in SofaPython, so getRootPath is bound in Node instead
     Node* node=down_cast<Node>(((PySPtr<Base>*)self)->object->toBaseNode());
 
-    return PyString_FromString(node->getRootPath().c_str());
+    return PyUnicode_FromString(node->getRootPath().c_str());
 }
 
 // the same as 'getPathName' with a extra prefix '@'
 extern "C" PyObject * Node_getLinkPath(PyObject * self, PyObject * /*args*/)
 {
     Node* node=down_cast<Node>(((PySPtr<Base>*)self)->object->toBaseNode());
-    return PyString_FromString(("@"+node->getPathName()).c_str());
+    return PyUnicode_FromString(("@"+node->getPathName()).c_str());
 }
 
 extern "C" PyObject * Node_createChild(PyObject *self, PyObject * args)
@@ -229,7 +229,7 @@ extern "C" PyObject * Node_addObject_Impl(PyObject *self, PyObject * args, PyObj
         {
             PyObject *key = PyList_GetItem(keys,i);
             PyObject *value = PyList_GetItem(values,i);
-            if( !strcmp(PyString_AsString(key),"warning") )
+            if( !strcmp(PyUnicode_AsUTF8(key),"warning") )
             {
                 if PyBool_Check(value)
                     warning = (value==Py_True);

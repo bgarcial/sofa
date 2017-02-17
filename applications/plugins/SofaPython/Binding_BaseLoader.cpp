@@ -60,7 +60,7 @@ extern "C" PyObject * BaseLoader_getFilename(PyObject *self, PyObject * /*args*/
 {
     BaseLoader* obj=((PySPtr<Base>*)self)->object->toBaseLoader();
     std::string filename = obj->getFilename();
-    return PyString_FromString(filename.c_str());
+    return PyUnicode_FromString(filename.c_str());
 }
 
 

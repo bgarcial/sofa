@@ -87,7 +87,7 @@ struct PySPtr
         // and so the destructor of the smart ptr is not called when the PyObject
         // is destroyed. To prevent leaking we explicitly remove the reference here.
         _self->object.reset ();
-        _self->ob_type->tp_free( (PyObject*)_self );
+        Py_TYPE(_self)->tp_free( (PyObject*)_self );
     }
 };
 
@@ -308,12 +308,12 @@ static PyTypeObject DummyChild_PyTypeObject = {
     extern "C" PyObject * C##_getAttr_##D(PyObject *self, void*) \
     { \
         C::SPtr obj=((PySPtr<C>*)self)->object;  \
-        return PyString_FromString(obj->findData(#D)->getValueString().c_str()); \
+        return PyUnicode_FromString(obj->findData(#D)->getValueString().c_str()); \
     } \
     extern "C" int C##_setAttr_##D(PyObject *self, PyObject * args, void*) \
     { \
         C::SPtr obj=((PySPtr<C>*)self)->object; \
-        char *str = PyString_AsString(args); \
+        char *str = PyUnicode_AsUTF8(args); \
         obj->findData(#D)->read(str); \
         return 0; \
     }

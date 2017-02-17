@@ -23,7 +23,7 @@
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__)
-#    include <Python/Python.h>
+#    include <Python.h>
 #else
 #    include <Python.h>
 #endif

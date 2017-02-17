@@ -243,7 +243,7 @@ std::string PythonEnvironment::getError()
     PyObject *ptype, *pvalue /* error msg */, *ptraceback /*stack snapshot and many other informations (see python traceback structure)*/;
     PyErr_Fetch(&ptype, &pvalue, &ptraceback);
     if(pvalue)
-        error = PyString_AsString(pvalue);
+        error = PyUnicode_AsUTF8(pvalue);
 
     return error;
 }
@@ -318,14 +318,14 @@ bool PythonEnvironment::runFile( const char *filename, const std::vector<std::st
     std::string backupFileName;
     PyObject* backupFileObject = PyDict_GetItemString(pDict, "__file__");
     if(backupFileObject)
-        backupFileName = PyString_AsString(backupFileObject);
+        backupFileName = PyUnicode_AsUTF8(backupFileObject);
 
-    PyObject* newFileObject = PyString_FromString(filename);
+    PyObject* newFileObject = PyUnicode_FromString(filename);
     PyDict_SetItemString(pDict, "__file__", newFileObject);
 
     int error = PyRun_SimpleFileEx(PyFile_AsFile(scriptPyFile), filename, 1);
 
-    backupFileObject = PyString_FromString(backupFileName.c_str());
+    backupFileObject = PyUnicode_FromString(backupFileName.c_str());
     PyDict_SetItemString(pDict, "__file__", backupFileObject);
 
     //  Py_END_ALLOW_THREADS

@@ -31,7 +31,7 @@ using namespace sofa::core::objectmodel;
 extern "C" PyObject * OptionsGroupData_getAttr_selectedItem(PyObject *self, void*)
 {
     Data<OptionsGroup>* data = down_cast<Data<OptionsGroup> >( ((PyPtr<BaseData>*)self)->object );
-    return PyString_FromString(data->getValue().getSelectedItem().c_str());
+    return PyUnicode_FromString(data->getValue().getSelectedItem().c_str());
 }
 extern "C" int OptionsGroupData_setAttr_selectedItem_impl(PyObject *self, char* item)
 {
@@ -43,7 +43,7 @@ extern "C" int OptionsGroupData_setAttr_selectedItem_impl(PyObject *self, char* 
 }
 extern "C" int OptionsGroupData_setAttr_selectedItem(PyObject *self, PyObject * args, void*)
 {
-    char *str = PyString_AsString(args); // for setters, only one object and not a tuple....
+    char *str = PyUnicode_AsUTF8(args); // for setters, only one object and not a tuple....
     OptionsGroupData_setAttr_selectedItem_impl(self,str);
     return 0;
 }
@@ -51,7 +51,7 @@ extern "C" int OptionsGroupData_setAttr_selectedItem(PyObject *self, PyObject * 
 extern "C" PyObject * OptionsGroupData_getAttr_selectedId(PyObject *self, void*)
 {
     Data<OptionsGroup>* data = down_cast<Data<OptionsGroup> >( ((PyPtr<BaseData>*)self)->object );
-    return PyInt_FromLong((long)data->getValue().getSelectedId());
+    return PyLong_FromLong((long)data->getValue().getSelectedId());
 }
 void OptionsGroupData_setAttr_selectedId_impl(PyObject *self, unsigned id)
 {
@@ -62,7 +62,7 @@ void OptionsGroupData_setAttr_selectedId_impl(PyObject *self, unsigned id)
 }
 extern "C" int OptionsGroupData_setAttr_selectedId(PyObject *self, PyObject * args, void*)
 {
-    OptionsGroupData_setAttr_selectedId_impl( self, (unsigned)PyInt_AsLong(args) );
+    OptionsGroupData_setAttr_selectedId_impl( self, (unsigned)PyLong_AsLong(args) );
     return 0;
 }
 
@@ -108,13 +108,13 @@ extern "C" PyObject * OptionsGroupData_getItem(PyObject *self, PyObject * args)
         PyErr_BadArgument();
         return NULL;
     }
-    return PyString_FromString(data->getValue()[index].c_str());
+    return PyUnicode_FromString(data->getValue()[index].c_str());
 }
 
 extern "C" PyObject * OptionsGroupData_getSize(PyObject *self, PyObject *)
 {
     Data<OptionsGroup>* data = down_cast<Data<OptionsGroup> >( ((PyPtr<BaseData>*)self)->object );
-    return PyInt_FromLong((long)data->getValue().size());
+    return PyLong_FromLong((long)data->getValue().size());
 }
 
 

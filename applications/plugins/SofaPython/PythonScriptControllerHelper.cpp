@@ -68,15 +68,15 @@ void PythonScriptController_pyObjectToValue(PyObject* pyObject, bool & val)
 
 void PythonScriptController_pyObjectToValue(PyObject* pyObject, int & val)
 {
-    if (pyObject && pyObject!=Py_None && PyInt_Check(pyObject))
-        val = (int)PyInt_AS_LONG(pyObject);
+    if (pyObject && pyObject!=Py_None && PyLong_Check(pyObject))
+        val = (int)PyLong_AS_LONG(pyObject);
     else
         SP_MESSAGE_ERROR("Cannot convert pyObject to int");
 }
 void PythonScriptController_pyObjectToValue(PyObject* pyObject, unsigned int & val)
 {
-    if (pyObject && pyObject!=Py_None && PyInt_Check(pyObject))
-        val = (unsigned int)PyInt_AsUnsignedLongMask(pyObject);
+    if (pyObject && pyObject!=Py_None && PyLong_Check(pyObject))
+        val = (unsigned int)PyLong_AsUnsignedLongMask(pyObject);
     else
         SP_MESSAGE_ERROR("Cannot convert pyObject to unsigned int");
 }
@@ -97,7 +97,7 @@ void PythonScriptController_pyObjectToValue(PyObject* pyObject, double & val)
 }
 void PythonScriptController_pyObjectToValue(PyObject* pyObject, std::string & val)
 {
-    if (pyObject && pyObject!=Py_None && PyString_Check(pyObject))
+    if (pyObject && pyObject!=Py_None && PyUnicode_Check(pyObject))
         val = PyString_AS_STRING(pyObject);
     else
         SP_MESSAGE_ERROR("Cannot convert pyObject to std::string");
