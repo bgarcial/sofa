@@ -19,14 +19,26 @@
 *                                                                             *
 * Contact information: contact@sofa-framework.org                             *
 ******************************************************************************/
-#ifndef BINDING_BASEDATA_H
-#define BINDING_BASEDATA_H
+#define SOFA_HELPER_GL_BASICSHAPESGL_CPP
 
-#include "PythonMacros.h"
+#include <sofa/helper/gl/BasicShapesGL.inl>
 
-SP_DECLARE_CLASS_TYPE(Data)
+namespace sofa
+{
 
-PyObject *GetDataValuePython(sofa::core::objectmodel::BaseData* data);
-int SetDataValuePython(sofa::core::objectmodel::BaseData* data, PyObject* value);
+namespace helper
+{
 
-#endif // BINDING_BASEDATA_H
+namespace gl
+{
+
+template class SOFA_HELPER_API BasicShapesGL_Sphere<helper::fixed_array< float, 3 > >;
+template class SOFA_HELPER_API BasicShapesGL_Sphere<helper::fixed_array< double, 3 > >;
+template class SOFA_HELPER_API BasicShapesGL_FakeSphere<helper::fixed_array< float, 3 > >;
+template class SOFA_HELPER_API BasicShapesGL_FakeSphere<helper::fixed_array< double, 3 > >;
+
+} //gl
+} //helper
+} //sofa
+
+
