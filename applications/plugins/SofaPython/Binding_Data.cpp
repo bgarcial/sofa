@@ -363,9 +363,9 @@ int SetDataValuePython(BaseData* data, PyObject* args)
 
 
     // string
-    if (PyString_Check(args))
+    if (PyUnicode_Check(args))
     {
-        char *str = PyString_AsString(args); // for setters, only one object and not a tuple....
+        char *str = PyUnicode_AsUTF8(args); // for setters, only one object and not a tuple....
 
         if( strlen(str)>0u && str[0]=='@' ) // DataLink
         {
@@ -387,7 +387,7 @@ int SetDataValuePython(BaseData* data, PyObject* args)
 
 
     // int
-    if (PyInt_Check(args))
+    if (PyLong_Check(args))
     {
         if (rowWidth*nbRows<1 || (!typeinfo->Integer() && !typeinfo->Scalar()))
         {

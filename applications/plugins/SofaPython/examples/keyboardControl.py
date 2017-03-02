@@ -3,7 +3,7 @@ import Sofa
 class KeyboardControl(Sofa.PythonScriptController):
 	# called once graph is created, to init some stuff...
 	def initGraph(self,node):
-		print 'initGraph called (python side)'
+		print ("initGraph called (python side)")
 		self.MechanicalState = node.getObject('DOFs')
 		return 0
 	 

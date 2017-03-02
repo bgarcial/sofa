@@ -98,7 +98,7 @@ void PythonScriptController_pyObjectToValue(PyObject* pyObject, double & val)
 void PythonScriptController_pyObjectToValue(PyObject* pyObject, std::string & val)
 {
     if (pyObject && pyObject!=Py_None && PyUnicode_Check(pyObject))
-        val = PyString_AS_STRING(pyObject);
+        val = PyUnicode_AsUTF8(pyObject);
     else
         SP_MESSAGE_ERROR("Cannot convert pyObject to std::string");
 }

@@ -78,9 +78,9 @@ SP_CLASS_ATTR_SET(VectorLinearSpringData,value)(PyObject *self, PyObject * args,
     DataBinding_VectorLinearSpring* data=((PyPtr<DataBinding_VectorLinearSpring>*)self)->object; // TODO: check dynamic cast
 
     // string
-    if (PyString_Check(args))
+    if (PyUnicode_Check(args))
     {
-        char *str = PyString_AsString(args); // for setters, only one object and not a tuple....
+        char *str = PyUnicode_AsUTF8(args); // for setters, only one object and not a tuple....
 
         if( strlen(str)>0u && str[0]=='@' ) // DataLink
         {
@@ -265,7 +265,7 @@ extern "C" PyObject * VectorLinearSpringData_getitem(PyObject *self, PyObject *i
     //    int rowWidth = typeinfo->size();
     int nbRows = typeinfo->size(data->getValueVoidPtr()) / typeinfo->size();
 
-    long index = PyInt_AsLong(i);
+    long index = PyLong_AsLong(i);
 
     if (typeinfo->size(valueVoidPtr)==1)
     {
@@ -298,7 +298,7 @@ extern "C" int VectorLinearSpringData_setitem(PyObject *self, PyObject* i, PyObj
     const AbstractTypeInfo *typeinfo = data->getValueTypeInfo();
     int nbRows = typeinfo->size(data->getValueVoidPtr()) / typeinfo->size();
 
-    long index = PyInt_AsLong(i);
+    long index = PyLong_AsLong(i);
 
     if( index>=nbRows )
     {

@@ -66,7 +66,7 @@ void bindSofaPythonModule()
 {
     //PyImport_AppendInittab( (char*)"Sofa", &initSofa );
 
-    PythonFactory::s_sofaPythonModule = SP_INIT_MODULE(Sofa)
+    SP_INIT_MODULE(PythonFactory::s_sofaPythonModule,Sofa)
 
 
     // non Base-Inherited types
