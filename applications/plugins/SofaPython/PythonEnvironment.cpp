@@ -89,7 +89,11 @@ void PythonEnvironment::Init()
     if( putenv( (char*)"PYTHONUNBUFFERED=1" ) )
         SP_MESSAGE_WARNING("failed to set environment variable PYTHONUNBUFFERED")
 
+    // register Python Module BEFORE Py_Initialize
+    registerSofaPythonModule();
+
     // Initialize the Python Interpreter.
+printf("Py_Initialize...\n");
     Py_Initialize();
 
     // Append sofa modules to the embedded python environment.

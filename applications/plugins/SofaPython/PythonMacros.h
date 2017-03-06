@@ -62,20 +62,22 @@
 // =============================================================================
 
 // PyObject *MyModule = SP_INIT_MODULE(MyModuleName)
-#define SP_INIT_MODULE(result,MODULENAME) { \
-        static struct PyModuleDef module = { \
-           PyModuleDef_HEAD_INIT, \
-           #MODULENAME,   /* name of module */ \
-           NULL, /* module documentation, may be NULL */ \
-           -1,       /* size of per-interpreter state of the module, or -1 if the module keeps state in global variables. */ \
-           MODULENAME##ModuleMethods, \
-           NULL, /*Currently unused, should be NULL. */ \
-           NULL, /*A traversal function to call during GC traversal of the module object, or NULL if not needed.*/ \
-           NULL, /*A clear function to call during GC clearing of the module object, or NULL if not needed. */ \
-           NULL /*A function to call during deallocation of the module object, or NULL if not needed. */ \
-        }; \
-        result = PyModule_Create(&module);\
-    }
+
+//#define SP_INIT_MODULE(result,MODULENAME) { \
+//        static struct PyModuleDef module = { \
+//           PyModuleDef_HEAD_INIT, \
+//           #MODULENAME,   /* name of module */ \
+//           NULL, /* module documentation, may be NULL */ \
+//           -1,       /* size of per-interpreter state of the module, or -1 if the module keeps state in global variables. */ \
+//           MODULENAME##ModuleMethods, \
+//           NULL, /*Currently unused, should be NULL. */ \
+//           NULL, /*A traversal function to call during GC traversal of the module object, or NULL if not needed.*/ \
+//           NULL, /*A clear function to call during GC clearing of the module object, or NULL if not needed. */ \
+//           NULL /*A function to call during deallocation of the module object, or NULL if not needed. */ \
+//        }; \
+//        result = PyModule_Create(&module);\
+//        printf("PyModule_Create %s\n",PyUnicode_AsUTF8(PyObject_Str(result)));\
+//    }
 
 #define SP_MODULE_METHODS_BEGIN(MODULENAME) PyMethodDef MODULENAME##ModuleMethods[] = {
 #define SP_MODULE_METHODS_END {NULL,NULL,0,NULL} };

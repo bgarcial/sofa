@@ -113,24 +113,6 @@ extern "C" PyObject * Sofa_createObject(PyObject * /*self*/, PyObject * args, Py
     return sofa::PythonFactory::toPython(obj.get());
 }
 
-
-extern "C" PyObject * Sofa_getObject(PyObject * /*self*/, PyObject * /*args*/)
-{
-    // deprecated on date 2012/07/18
-    SP_MESSAGE_DEPRECATED( "Sofa.getObject(BaseContext,path) is deprecated. Please use BaseContext.getObject(path) instead." )
-    PyErr_BadArgument();
-    return NULL;
-
-}
-
-extern "C" PyObject * Sofa_getChildNode(PyObject * /*self*/, PyObject * /*args*/)
-{
-    // deprecated on date 2012/07/18
-    SP_MESSAGE_DEPRECATED( "Sofa.getChildNode(Node,path) is deprecated. Please use Node.getChild(path) instead." )
-    PyErr_BadArgument();
-    return NULL;
-}
-
 using namespace sofa::gui;
 
 // send a text message to the GUI
@@ -623,8 +605,6 @@ SP_MODULE_METHODS_BEGIN(Sofa)
 SP_MODULE_METHOD(Sofa,getSofaPythonVersion) 
 SP_MODULE_METHOD(Sofa,createNode)
 SP_MODULE_METHOD_KW(Sofa,createObject)
-SP_MODULE_METHOD(Sofa,getObject)        // deprecated on date 2012/07/18
-SP_MODULE_METHOD(Sofa,getChildNode)     // deprecated on date 2012/07/18
 SP_MODULE_METHOD(Sofa,sendGUIMessage)
 SP_MODULE_METHOD(Sofa,saveScreenshot)
 SP_MODULE_METHOD(Sofa,setViewerResolution)
