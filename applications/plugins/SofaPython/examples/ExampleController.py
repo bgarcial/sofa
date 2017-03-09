@@ -50,12 +50,12 @@ class ExampleController(Sofa.PythonScriptController):
 	# called once the script is loaded
 	def onLoaded(self,node):
 		self.counter = 0
-		print 'Controller script loaded from node %s'%node.findData('name').value
+		print("Controller script loaded from node "+node.findData('name').value)
 		return 0
 
 	# optionnally, script can create a graph...
 	def createGraph(self,node):
-		print 'createGraph called (python side)'
+		print("createGraph called (python side)")
 
 		#uncomment to create nodes
 		#testNodes(node)
@@ -69,11 +69,11 @@ class ExampleController(Sofa.PythonScriptController):
 
 	# called once graph is created, to init some stuff...
 	def initGraph(self,node):
-		print 'initGraph called (python side)'
+		print("initGraph called (python side)")
 		return 0
 
 	def bwdInitGraph(self,node):
-		print 'bwdInitGraph called (python side)'
+		print("bwdInitGraph called (python side)")
 		sys.stdout.flush()
 		return 0
 
@@ -97,55 +97,55 @@ class ExampleController(Sofa.PythonScriptController):
 
 	# called when necessary by Sofa framework... 
 	def storeResetState(self):
-		print 'storeResetState called (python side)'
+		print("storeResetState called (python side)")
 		sys.stdout.flush()
 		return 0
 
 	def reset(self):
-		print 'reset called (python side)'
+		print("reset called (python side)")
 		sys.stdout.flush()
 		return 0
 
 	def cleanup(self):
-		print 'cleanup called (python side)'
+		print("cleanup called (python side)")
 		sys.stdout.flush()
 		return 0
 
 
 	# called when a GUIEvent is received
 	def onGUIEvent(self,controlID,valueName,value):
-		print 'GUIEvent received: controldID='+controlID+' valueName='+valueName+' value='+value
+		print("GUIEvent received: controldID="+controlID+" valueName="+valueName+" value="+value)
 		sys.stdout.flush()
 		return 0 
 
 	# key and mouse events; use this to add some user interaction to your scripts 
 	def onKeyPressed(self,k):
-		print 'onKeyPressed '+k
+		print("onKeyPressed "+k)
 		sys.stdout.flush()
 		return 0 
 
 	def onKeyReleased(self,k):
-		print 'onKeyReleased '+k
+		print("onKeyReleased "+k)
 		sys.stdout.flush()
 		return 0 
 
 	def onMouseButtonLeft(self,x,y,pressed):
-		print 'onMouseButtonLeft x='+str(x)+' y='+str(y)+' pressed='+str(pressed)
+		print("onMouseButtonLeft x="+str(x)+" y="+str(y)+" pressed="+str(pressed))
 		sys.stdout.flush()
 		return 0
 
 	def onMouseButtonRight(self,x,y,pressed):
-		print 'onMouseButtonRight x='+str(x)+' y='+str(y)+' pressed='+str(pressed)
+		print("onMouseButtonRight x="+str(x)+" y="+str(y)+" pressed="+str(pressed))
 		sys.stdout.flush()
 		return 0
 
 	def onMouseButtonMiddle(self,x,y,pressed):
-		print 'onMouseButtonMiddle x='+str(x)+' y='+str(y)+' pressed='+str(pressed)
+		print("onMouseButtonMiddle x="+str(x)+" y="+str(y)+" pressed="+str(pressed))
 		sys.stdout.flush()
 		return 0
 
 	def onMouseWheel(self,x,y,delta):
-		print 'onMouseButtonWheel x='+str(x)+' y='+str(y)+' delta='+str(delta)
+		print("onMouseButtonWheel x="+str(x)+" y="+str(y)+" delta="+str(delta))
 		sys.stdout.flush()
 		return 0
 
@@ -153,7 +153,7 @@ class ExampleController(Sofa.PythonScriptController):
 	# called at each draw (possibility to use PyOpenGL)
 	def draw(self):
 		if self.counter < 10:
-			print 'draw ('+str(self.counter+1)+' / 10)'
+			print("draw ("+str(self.counter+1)+" / 10)")
 			self.counter += 1
 		sys.stdout.flush()
 

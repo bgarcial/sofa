@@ -84,7 +84,6 @@ PyMODINIT_FUNC PyInit_Sofa(void)
 
 void registerSofaPythonModule()
 {
-printf("PyImport_AppendInittab...\n");
     PyImport_AppendInittab("Sofa",PyInit_Sofa); // must be run before Py_Initialize()
 
 }
@@ -92,10 +91,6 @@ printf("PyImport_AppendInittab...\n");
 void bindSofaPythonModule()
 {
     //PyImport_AppendInittab( (char*)"Sofa", &initSofa );
-
-    printf(">>>>>>>>>>>>>>>>>>>>>>>>> bindSofaPythonModule\n");
-
-    PyRun_SimpleString("print(globals())");
 
    // PythonFactory::s_sofaPythonModule = PyInit_Sofa();
 
@@ -105,11 +100,7 @@ void bindSofaPythonModule()
 //    if (!PythonFactory::s_sofaPythonModule || PythonFactory::s_sofaPythonModule==Py_None)
 //            printf(">>>>>>>>>>>>>>>>>>>>>>>>> bindSofaPythonModule NONE\n");
 
-    PyRun_SimpleString("print(globals())");
-
     PyImport_ImportModule("Sofa");
-    PyRun_SimpleString("print(globals())");
-
 
     // non Base-Inherited types
 
