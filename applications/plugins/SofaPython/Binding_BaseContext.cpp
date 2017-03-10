@@ -250,7 +250,7 @@ extern "C" PyObject * BaseContext_getObjects(PyObject * self, PyObject * args)
     }
 
     sofa::core::objectmodel::BaseContext::SearchDirection search_direction_enum= sofa::core::objectmodel::BaseContext::Local;
-    if ( search_direction ) 
+    if ( search_direction )
     {
         std::string search_direction_str ( search_direction );
         if ( search_direction_str == "SearchUp" )
@@ -273,7 +273,7 @@ extern "C" PyObject * BaseContext_getObjects(PyObject * self, PyObject * args)
         {
             search_direction_enum= sofa::core::objectmodel::BaseContext::SearchParents;
         }
-        else 
+        else
         {
             SP_MESSAGE_WARNING( "BaseContext_getObjects: Invalid search direction, using 'Local'. Expected: 'SearchUp', 'Local', 'SearchDown', 'SearchRoot', or 'SearchParents'." )
         }
@@ -302,16 +302,67 @@ extern "C" PyObject * BaseContext_getObjects(PyObject * self, PyObject * args)
 }
 
 SP_CLASS_METHODS_BEGIN(BaseContext)
-SP_CLASS_METHOD(BaseContext,getRootContext)
-SP_CLASS_METHOD(BaseContext,getTime)
-SP_CLASS_METHOD(BaseContext,getDt)
-SP_CLASS_METHOD(BaseContext,getGravity)
-SP_CLASS_METHOD(BaseContext,setGravity)
-SP_CLASS_METHOD_KW(BaseContext,createObject)
-SP_CLASS_METHOD_KW(BaseContext,createObject_noWarning) // deprecated
-SP_CLASS_METHOD_KW(BaseContext,getObject)
-SP_CLASS_METHOD(BaseContext,getObject_noWarning) // deprecated
-SP_CLASS_METHOD(BaseContext,getObjects)
+SP_CLASS_METHOD_DOC(BaseContext,getRootContext,
+                    "returns the root context.\n"
+                    "example:\n"
+                    "   root = node.getRootContext()\n"
+                    "   root.animate=false")
+SP_CLASS_METHOD_DOC(BaseContext,getTime,
+                    "returns the accumulated time since the beginnning of the simulation.\n"
+                    "example:\n"
+                    "   time = node.getTime()\n"
+                    "   ")
+SP_CLASS_METHOD_DOC(BaseContext,getDt,
+                    "returns the current delta time use for simulation.\n"
+                    "example:\n"
+                    "   time = node.getDt()\n"
+                    "   ")
+SP_CLASS_METHOD_DOC(BaseContext,getGravity,
+                    "returns the gravity of the node (a Sofa.Vector3 object).\n"
+                    "example:\n"
+                    "   g = node.getGravity()\n"
+                    "   print(str(g.x)"
+                    )
+SP_CLASS_METHOD_DOC(BaseContext,setGravity,
+                    "sets the gravity of the node (a Sofa.Vector3 object).\n"
+                    "example:\n"
+                    "   g = Sofa.Vector3(0.0,-9.81,0.0)\n"
+                    "   node.setGravity(g)"
+                    )
+SP_CLASS_METHOD_KW_DOC(BaseContext,createObject,
+                   "Creates a Sofa object and then adds it to the node. "
+                   "First argument is the type name, parameters are passed as subsequent keyword arguments.\n"
+                   "example:\n"
+                   "   object = node.createObject('MechanicalObject',name='mObject',dx=x,dy=y,dz=z)"
+                   )
+SP_CLASS_METHOD_KW_DOC(BaseContext,createObject_noWarning,   // deprecated
+                   "(Deprecated) Creates a Sofa object and then adds it to the node. "
+                   "First argument is the type name, parameters are passed as subsequent keyword arguments. \n"
+                   "IMPORTANT: In this version, no warning is output in the console if the object cannot be initialized.\n"
+                   "example:\n"
+                   "   object = node.createObject_noWarning('MechanicalObject',name='mObject',dx=x,dy=y,dz=z)"
+                   )
+SP_CLASS_METHOD_DOC(BaseContext,getObject,
+                    "Returns the object by its path. Can be in this node or another, in function of the path... \n"
+                    "examples:\n"
+                    "   mecanicalState = node.getObject('DOFs')\n"
+                    "   mesh = node.getObject('visuNode/OglModel')"
+                    )
+SP_CLASS_METHOD_DOC(BaseContext,getObject_noWarning,
+                    "(Deprecated) Returns the object by its path. Can be in this node or another, in function of the path... \n"
+                    "IMPORTANT: In this version, no warning is output in the console if the object cannot be initialized.\n"
+                    "examples:\n"
+                    "   mecanicalState = node.getObject_noWarning('DOFs')\n"
+                    "   mesh = node.getObject('visuNode/OglModel')"
+
+                    ) // deprecated
+SP_CLASS_METHOD_DOC(BaseContext,getObjects,
+                    "Returns a list of the objects of this node. \n"
+                    "example:\n"
+                    "   objects = node.getObjects()\n"
+                    "   for obj in objets:\n"
+                    "       print (obj.name)"
+                    )
 SP_CLASS_METHODS_END
 
 
