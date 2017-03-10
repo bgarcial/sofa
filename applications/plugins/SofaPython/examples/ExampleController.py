@@ -120,12 +120,12 @@ class ExampleController(Sofa.PythonScriptController):
 
 	# key and mouse events; use this to add some user interaction to your scripts 
 	def onKeyPressed(self,k):
-		print("onKeyPressed "+k)
+		print("onKeyPressed "+str(ord(k)))
 		sys.stdout.flush()
 		return 0 
 
 	def onKeyReleased(self,k):
-		print("onKeyReleased "+k)
+		print("onKeyReleased "+str(ord(k)))
 		sys.stdout.flush()
 		return 0 
 
