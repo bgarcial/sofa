@@ -159,7 +159,7 @@ extern "C" PyObject * Sofa_saveScreenshot(PyObject * /*self*/, PyObject * args)
 // set the viewer resolution
 extern "C" PyObject * Sofa_setViewerResolution(PyObject * /*self*/, PyObject * args)
 {
-	int width, height;
+    int width, height;
     if (!PyArg_ParseTuple(args, "ii",&width,&height))
     {
         PyErr_BadArgument();
@@ -181,20 +181,20 @@ extern "C" PyObject * Sofa_setViewerResolution(PyObject * /*self*/, PyObject * a
 // set the viewer resolution
 extern "C" PyObject * Sofa_setViewerBackgroundColor(PyObject * /*self*/, PyObject * args)
 {
-	float r = 0.0f, g = 0.0f, b = 0.0f;
-	sofa::defaulttype::Vector3 color;
+    float r = 0.0f, g = 0.0f, b = 0.0f;
+    sofa::defaulttype::Vector3 color;
     if (!PyArg_ParseTuple(args, "fff", &r, &g, &b))
     {
         PyErr_BadArgument();
         return NULL;
     }
-	color[0] = r; color[1] = g; color[2] = b;
-	for (int i = 0; i < 3; ++i){
-		if (color[i] < 00.f || color[i] > 1.0) {
-			PyErr_BadArgument();
-			return NULL;
-		}
-	}
+    color[0] = r; color[1] = g; color[2] = b;
+    for (int i = 0; i < 3; ++i){
+        if (color[i] < 00.f || color[i] > 1.0) {
+            PyErr_BadArgument();
+            return NULL;
+        }
+    }
 
     BaseGUI *gui = GUIManager::getGUI();
     if (!gui)
@@ -530,7 +530,23 @@ extern "C" PyObject * Sofa_loadScene(PyObject * /*self*/, PyObject * args)
     Py_RETURN_NONE;
 }
 
+extern "C" PyObject * Sofa_getAvailableComponents(PyObject * /*self*/, PyObject * /*args*/)
+{
+    std::vector<ObjectFactory::ClassEntry::SPtr> entries ;
+    ObjectFactory::getInstance()->getAllEntries(entries) ;
 
+    PyObject *pyList = PyList_New(entries.size());
+
+    for (size_t i=0; i<entries.size(); i++){
+        PyObject *tuple = PyList_New(2);
+        PyList_SetItem(tuple, 0, Py_BuildValue("s", entries[i]->className.c_str()));
+        PyList_SetItem(tuple, 1, Py_BuildValue("s", entries[i]->description.c_str()));
+
+        PyList_SetItem(pyList, (Py_ssize_t)i, tuple);
+    }
+
+    return pyList;
+}
 
 extern "C" PyObject * Sofa_loadPythonSceneWithArguments(PyObject * /*self*/, PyObject * args)
 {
@@ -602,7 +618,7 @@ extern "C" PyObject * Sofa_loadPlugin(PyObject * /*self*/, PyObject * args)
 
 // Methods of the module
 SP_MODULE_METHODS_BEGIN(Sofa)
-SP_MODULE_METHOD(Sofa,getSofaPythonVersion) 
+SP_MODULE_METHOD(Sofa,getSofaPythonVersion)
 SP_MODULE_METHOD(Sofa,createNode)
 SP_MODULE_METHOD_KW(Sofa,createObject)
 SP_MODULE_METHOD(Sofa,sendGUIMessage)
@@ -621,6 +637,7 @@ SP_MODULE_METHOD(Sofa,msg_error)
 SP_MODULE_METHOD(Sofa,msg_fatal)
 SP_MODULE_METHOD(Sofa,loadScene)
 SP_MODULE_METHOD(Sofa,loadPythonSceneWithArguments)
+SP_MODULE_METHOD(Sofa,getAvailableComponents)
 SP_MODULE_METHOD(Sofa,loadPlugin)
 SP_MODULE_METHODS_END
 
