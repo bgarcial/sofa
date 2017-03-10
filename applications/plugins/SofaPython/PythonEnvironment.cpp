@@ -93,7 +93,6 @@ void PythonEnvironment::Init()
     registerSofaPythonModule();
 
     // Initialize the Python Interpreter.
-printf("Py_Initialize...\n");
     Py_Initialize();
 
     // Append sofa modules to the embedded python environment.
