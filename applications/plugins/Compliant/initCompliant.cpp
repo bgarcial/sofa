@@ -62,7 +62,7 @@ void initExternalModule()
         // previous Eigen versions have a critical bug (v.noalias()+=w does not work in some situations)
         static_assert( EIGEN_WORLD_VERSION>=3 && EIGEN_MAJOR_VERSION>=2 && EIGEN_MINOR_VERSION>=5, "" );
 
-#ifdef SOFA_HAVE_SOFAPYTHON
+#ifdef SOFA_HAVE_SOFAPYTHON27
         // adding _Compliant python module
         if( PythonFactory::s_sofaPythonModule ) // add the module only if the Sofa module exists (SofaPython is loaded)
         {
@@ -108,7 +108,7 @@ const char* getModuleComponentList()
 // compilers like the ones found on consoles.
 SOFA_Compliant_API void initCompliant()
 {
-	component::collision::registerContactClasses();
+    component::collision::registerContactClasses();
 }
 
 }
