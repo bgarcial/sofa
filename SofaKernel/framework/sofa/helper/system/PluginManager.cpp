@@ -109,12 +109,22 @@ void PluginManager::writeToIniFile(const std::string& path)
     outstream.close();
 }
 
+void PluginManager::addPluginAlias(const std::string &thePluginName,
+                                   const std::string &theAlias)
+{
+    if( m_aliasMap.find(thePluginName) != m_aliasMap.end() )
+    {
+        msg_warning("PluginManager") << "Overriding the existing alias '"<< m_aliasMap[thePluginName] <<"'->'"
+                                     << thePluginName << "' with a new one '" << theAlias << "'" ;
+    }
+    m_aliasMap[thePluginName] = theAlias ;
+}
+
 bool PluginManager::loadPluginByPath(const std::string& pluginPath, std::ostream* errlog)
 {
     if (pluginIsLoaded(pluginPath))
     {
         const std::string msg = "Plugin already loaded: " + pluginPath;
-//        Logger::getMainLogger().log(Logger::Warning, msg, "PluginManager");
         if (errlog) (*errlog) << msg << std::endl;
         return false;
     }
@@ -237,25 +247,37 @@ void PluginManager::init()
 
 void PluginManager::init(const std::string& pluginPath)
 {
-	PluginMap::iterator iter = m_pluginMap.find(pluginPath);
-	if(m_pluginMap.end() != iter)
-	{
+    PluginMap::iterator iter = m_pluginMap.find(pluginPath);
+    if(m_pluginMap.end() != iter)
+    {
         Plugin& plugin = iter->second;
         plugin.initExternalModule();
-	}
+    }
 }
 
+template<typename MAP>
+const typename MAP::mapped_type& getWithDefaultValue(const MAP& m,
+                                             const typename MAP::key_type& key,
+                                             const typename MAP::mapped_type& defval)
+{
+    typename MAP::const_iterator it = m.find(key);
+    if (it == m.end())
+        return defval;
 
+    return it->second;
+}
 
 std::string PluginManager::findPlugin(const std::string& pluginName, bool ignoreCase)
 {
-    std::string name(pluginName);
+    std::string name = getWithDefaultValue(m_aliasMap, pluginName, pluginName) ;
+
 #ifdef SOFA_LIBSUFFIX
     name += sofa_tostring(SOFA_LIBSUFFIX);
 #endif
-#if defined(_DEBUG) && defined(_MSC_VER) 
-	 name += "_d";
+#if defined(_DEBUG) && defined(_MSC_VER)
+     name += "_d";
 #endif
+
     const std::string libName = DynamicLibrary::prefix + name + "." + DynamicLibrary::extension;
 
     // First try: case sensitive

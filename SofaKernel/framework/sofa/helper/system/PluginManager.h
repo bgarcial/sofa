@@ -132,17 +132,19 @@ private:
 class SOFA_HELPER_API PluginManager
 {
 public:
+    typedef std::map<std::string, std::string> AliasMap;
     typedef std::map<std::string, Plugin > PluginMap;
     typedef PluginMap::iterator PluginIterator;
 
     static PluginManager& getInstance();
+    void addPluginAlias(const std::string& thePluginName, const std::string& theAlias) ;
     bool loadPlugin(const std::string& plugin, std::ostream* errlog=NULL);
     bool loadPluginByPath(const std::string& path, std::ostream* errlog=NULL);
     bool loadPluginByName(const std::string& pluginName, std::ostream* errlog=NULL);
     bool unloadPlugin(const std::string& path, std::ostream* errlog=NULL);
 
     void init();
-	void init(const std::string& pluginPath);
+    void init(const std::string& pluginPath);
 
     std::string findPlugin(const std::string& pluginName, bool ignoreCase = true);
     bool pluginIsLoaded(const std::string& pluginPath);
@@ -168,11 +170,13 @@ private:
     PluginManager();
     ~PluginManager();
     PluginManager(const PluginManager& );
-    std::ostream& writeToStream( std::ostream& ) const;
-    std::istream& readFromStream( std::istream& );
-private:
+
+    AliasMap  m_aliasMap;
     PluginMap m_pluginMap;
     std::vector<std::string> m_searchPaths;
+
+    std::ostream& writeToStream( std::ostream& ) const;
+    std::istream& readFromStream( std::istream& );
 };
 
 

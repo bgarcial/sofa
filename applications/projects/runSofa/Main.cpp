@@ -199,7 +199,8 @@ int main(int argc, char** argv)
 #endif
     string colorsStatus = "auto";
     string messageHandler = "auto";
-    bool enableInteraction = false ;
+    bool enableInteraction = false;
+    bool forcePython2 = false;
 
     string gui_help = "choose the UI (";
     gui_help += GUIManager::ListSupportedGUI('|');
@@ -222,6 +223,7 @@ int main(int argc, char** argv)
     .option(&colorsStatus,'z',"colors","use colors on stdout and stderr (yes, no, auto)")
     .option(&messageHandler,'f',"formatting","select the message formatting to use (auto, clang, sofa, rich, test)")
     .option(&enableInteraction, 'i', "interactive", "enable interactive mode for the GUI which includes idle and mouse events (EXPERIMENTAL)")
+    .option(&forcePython2, 'q', "python2", "force the use of python2 in place of python3")
 
 #ifdef SOFA_SMP
     .option(&disableStealing,'w',"disableStealing","Disable Work Stealing")
@@ -331,8 +333,17 @@ int main(int argc, char** argv)
     if (!files.empty())
         fileName = files[0];
 
-    for (unsigned int i=0; i<plugins.size(); i++)
-        PluginManager::getInstance().loadPlugin(plugins[i]);
+    /// Before loading any plugins we create an alias between SofaPython and SofaPython2
+    if(forcePython2){
+        msg_warning("Main") << "You are installing an alias between 'SofaPython2' and 'SofaPython'. "
+                               "Consequently each request for the SofaPython plugin will in fact be renamed "
+                               "into a request for the SofaPython2 one." ;
+        PluginManager::getInstance().addPluginAlias("SofaPython", "SofaPython2") ;
+    }
+
+    for (unsigned int i=0; i<plugins.size(); i++){
+        PluginManager::getInstance().loadPlugin( plugins[i] );
+    }
 
     // to force loading plugin SofaPython if existing
     {
