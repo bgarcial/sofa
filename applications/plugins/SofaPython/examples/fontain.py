@@ -1,12 +1,6 @@
 import Sofa
 
 import sys
-for p in sys.path:
-    print p
-#for m in sys.modules:
-#    print m
-    
-print __name__    
 
 import random
 
@@ -42,7 +36,7 @@ class Fontain(Sofa.PythonScriptController):
     
     # called once the script is loaded
     def onLoaded(self,node):
-        print 'Fontain.onLoaded called from node '+node.name
+        print("Fontain.onLoaded called from node "+node.name)
         self.rootNode = node
     
     particleCount = 0
@@ -70,14 +64,14 @@ class Fontain(Sofa.PythonScriptController):
      
     # optionnally, script can create a graph...
     def createGraph(self,node):
-        print 'Fontain.createGraph called from node '+node.name    
+        print("Fontain.createGraph called from node "+node.name)
         for i in range(1,100):
             node = self.spawnParticle()
             node.init()
         return 0
     
     def onScriptEvent(self,senderNode,eventName,data):
-        print 'onScriptEvent eventName='+eventName+' data='+str(data)+' sender='+senderNode.name
+        print("onScriptEvent eventName="+eventName+" data="+str(data)+" sender="+senderNode.name)
         if eventName=='below_floor':
             self.rootNode.removeChild(senderNode)
             self.spawnParticle()
