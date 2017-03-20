@@ -42,7 +42,7 @@ SP_CLASS_ATTR_GET(Link,name)(PyObject *self, void*)
 SP_CLASS_ATTR_SET(Link,name)(PyObject *self, PyObject * args, void*)
 {
     BaseLink* link=((PyPtr<BaseLink>*)self)->object; // TODO: check dynamic cast
-    char *str = PyUnicode_AsUTF8(args); // for setters, only one object and not a tuple....
+    char *str = SP_StringAsString(args); // for setters, only one object and not a tuple....
     link->setName(str);
     return 0;
 }
@@ -61,7 +61,7 @@ int SetLinkValuePython(BaseLink* link, PyObject* args)
     if( PyUnicode_Check(args) )
     {
         // it's a string
-        char *str = PyUnicode_AsUTF8(args); // for setters, only one object and not a tuple....
+        char *str = SP_StringAsString(args); // for setters, only one object and not a tuple....
         link->read(str);
         return 0;
     }
@@ -145,7 +145,7 @@ SP_CLASS_ATTR_SET(Link,value)(PyObject *self, PyObject * args, void*)
 //    }
 //    if (typeinfo->Text() && PyUnicode_Check(value))
 //    {
-//        typeinfo->setTextValue((void*)link->getValueVoidPtr(),index,PyUnicode_AsUTF8(value));
+//        typeinfo->setTextValue((void*)link->getValueVoidPtr(),index,SP_StringAsString(value));
 //        return PyLong_FromLong(0);
 //    }
 

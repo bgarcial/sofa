@@ -95,7 +95,7 @@ void bindSofaPythonModule()
    // PythonFactory::s_sofaPythonModule = PyInit_Sofa();
 
 
-//    printf("PyModule_Create %s\n",PyUnicode_AsUTF8(PyObject_Str(PythonFactory::s_sofaPythonModule)));
+//    printf("PyModule_Create %s\n",SP_StringAsString(PyObject_Str(PythonFactory::s_sofaPythonModule)));
 
 //    if (!PythonFactory::s_sofaPythonModule || PythonFactory::s_sofaPythonModule==Py_None)
 //            printf(">>>>>>>>>>>>>>>>>>>>>>>>> bindSofaPythonModule NONE\n");

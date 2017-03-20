@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.1)
 project(SofaPython)
 
+option(SOFAPYTHON_PYTHON3 "Bind on Python 3.x instead of 2.7" ON)
+
 set(SOFAPYTHON_MAJOR_VERSION 0)
 set(SOFAPYTHON_MINOR_VERSION 1)
 set(SOFAPYTHON_VERSION ${SOFAPYTHON_MAJOR_VERSION}.${SOFAPYTHON_MINOR_VERSION})
@@ -123,8 +125,12 @@ set(PYTHON_FILES
     python/SofaPython/livecoding.py
 )
 
+if(SOFAPYTHON_PYTHON3)
+    find_package(PythonLibs 3.0 REQUIRED)
+else(SOFAPYTHON_PYTHON3)
+    find_package(PythonLibs 2.7 REQUIRED)
+endif(SOFAPYTHON_PYTHON3)
 
-find_package(PythonLibs 3.0 REQUIRED)
 sofa_create_target(PythonLibs SofaPython "${PYTHON_LIBRARIES}" "${PYTHON_INCLUDE_DIRS}")
 find_package(SofaGui REQUIRED)
 find_package(SofaGeneral REQUIRED)

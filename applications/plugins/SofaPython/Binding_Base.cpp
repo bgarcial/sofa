@@ -100,7 +100,7 @@ extern "C" PyObject * Base_findLink(PyObject *self, PyObject *args)
 extern "C" PyObject* Base_GetAttr(PyObject *o, PyObject *attr_name)
 {
     Base* obj=down_cast<Base>(((PySPtr<Base>*)o)->object.get());
-    char *attrName = PyUnicode_AsUTF8(attr_name);
+    char *attrName = SP_StringAsString(attr_name);
 //    printf("Base_GetAttr type=%s name=%s attrName=%s\n",obj->getClassName().c_str(),obj->getName().c_str(),attrName);
 
     // see if a Data field has this name...
@@ -125,7 +125,7 @@ extern "C" int Base_SetAttr(PyObject *o, PyObject *attr_name, PyObject *v)
 {
     // attribute does not exist: see if a Data field has this name...
     Base* obj=down_cast<Base>(((PySPtr<Base>*)o)->object.get());
-    char *attrName = PyUnicode_AsUTF8(attr_name);
+    char *attrName = SP_StringAsString(attr_name);
 
 //    printf("Base_SetAttr name=%s\n",attrName);
     if (BaseData * data = obj->findData(attrName))

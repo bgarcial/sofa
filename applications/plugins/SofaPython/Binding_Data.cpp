@@ -40,7 +40,7 @@ SP_CLASS_ATTR_GET(Data,name)(PyObject *self, void*)
 SP_CLASS_ATTR_SET(Data,name)(PyObject *self, PyObject * args, void*)
 {
     BaseData* data=((PyPtr<BaseData>*)self)->object; // TODO: check dynamic cast
-    char *str = PyUnicode_AsUTF8(args); // for setters, only one object and not a tuple....
+    char *str = SP_StringAsString(args); // for setters, only one object and not a tuple....
     data->setName(str);
     return 0;
 }
@@ -237,7 +237,7 @@ static int SetDataValuePythonList(BaseData* data, PyObject* args,
                         PyErr_BadArgument();
                         return -1;
                     }
-                    char *str = PyUnicode_AsUTF8(listElt); // pour les setters, un seul objet et pas un tuple....
+                    char *str = SP_StringAsString(listElt); // pour les setters, un seul objet et pas un tuple....
                     typeinfo->setTextValue(editVoidPtr,i*rowWidth+j,str);
                 }
                 else
@@ -335,7 +335,7 @@ static int SetDataValuePythonList(BaseData* data, PyObject* args,
                     PyErr_BadArgument();
                     return -1;
                 }
-                char *str = PyUnicode_AsUTF8(listElt); // pour les setters, un seul objet et pas un tuple....
+                char *str = SP_StringAsString(listElt); // pour les setters, un seul objet et pas un tuple....
                 typeinfo->setTextValue(editVoidPtr,i,str);
             }
             else
@@ -365,7 +365,7 @@ int SetDataValuePython(BaseData* data, PyObject* args)
     // string
     if (PyUnicode_Check(args))
     {
-        char *str = PyUnicode_AsUTF8(args); // for setters, only one object and not a tuple....
+        char *str = SP_StringAsString(args); // for setters, only one object and not a tuple....
 
         if( strlen(str)>0u && str[0]=='@' ) // DataLink
         {
@@ -522,7 +522,7 @@ extern "C" PyObject * Data_setValue(PyObject *self, PyObject * args)
     }
     if (typeinfo->Text() && PyUnicode_Check(value))
     {
-        typeinfo->setTextValue((void*)data->getValueVoidPtr(),index,PyUnicode_AsUTF8(value));
+        typeinfo->setTextValue((void*)data->getValueVoidPtr(),index,SP_StringAsString(value));
         return PyLong_FromLong(0);
     }
 
@@ -607,7 +607,7 @@ extern "C" PyObject * Data_read(PyObject *self, PyObject * args)
 
     if (PyUnicode_Check(value))
     {
-        data->read(PyUnicode_AsUTF8(value));
+        data->read(SP_StringAsString(value));
     }
     else
     {
@@ -634,7 +634,7 @@ extern "C" PyObject * Data_setParent(PyObject *self, PyObject * args)
 
     if (PyUnicode_Check(value))
     {
-        data->setParent(PyUnicode_AsUTF8(value));
+        data->setParent(SP_StringAsString(value));
         data->setDirtyOutputs(); // forcing children updates (should it be done in BaseData?)
     }
     else if( dynamic_cast<BaseData*>(((PyBaseData*)value)->object) )

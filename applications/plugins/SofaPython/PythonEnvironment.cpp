@@ -258,7 +258,7 @@ std::string PythonEnvironment::getError()
     PyObject *ptype, *pvalue /* error msg */, *ptraceback /*stack snapshot and many other informations (see python traceback structure)*/;
     PyErr_Fetch(&ptype, &pvalue, &ptraceback);
     if(pvalue)
-        error = PyUnicode_AsUTF8(pvalue);
+        error = SP_StringAsString(pvalue);
 
     return error;
 }
@@ -329,7 +329,7 @@ bool PythonEnvironment::runFile( const char *filename, const std::vector<std::st
     std::string backupFileName;
     PyObject* backupFileObject = PyDict_GetItemString(pDict, "__file__");
     if(backupFileObject)
-        backupFileName = PyUnicode_AsUTF8(backupFileObject);
+        backupFileName = SP_StringAsString(backupFileObject);
 
     PyObject* newFileObject = PyUnicode_FromString(filename);
     PyDict_SetItemString(pDict, "__file__", newFileObject);

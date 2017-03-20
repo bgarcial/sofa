@@ -37,7 +37,14 @@
 
 #include <SofaPython/config.h>
 
-
+// =============================================================================
+// Python 2 / 3 compatability macros
+// =============================================================================
+#ifdef SOFAPYTHON_PYTHON3
+    #define SP_StringAsString SP_StringAsString
+#else //SOFAPYTHON_PYTHON3
+    #define SP_StringAsString PyString_AsString
+#endif //SOFAPYTHON_PYTHON3
 
 
 // =============================================================================
@@ -76,7 +83,7 @@
 //           NULL /*A function to call during deallocation of the module object, or NULL if not needed. */ \
 //        }; \
 //        result = PyModule_Create(&module);\
-//        printf("PyModule_Create %s\n",PyUnicode_AsUTF8(PyObject_Str(result)));\
+//        printf("PyModule_Create %s\n",SP_StringAsString(PyObject_Str(result)));\
 //    }
 
 #define SP_MODULE_METHODS_BEGIN(MODULENAME) PyMethodDef MODULENAME##ModuleMethods[] = {
@@ -357,7 +364,7 @@ static PyTypeObject DummyChild_PyTypeObject = {
     extern "C" int C##_setAttr_##D(PyObject *self, PyObject * args, void*) \
     { \
         C::SPtr obj=((PySPtr<C>*)self)->object; \
-        char *str = PyUnicode_AsUTF8(args); \
+        char *str = SP_StringAsString(args); \
         obj->findData(#D)->read(str); \
         return 0; \
     }

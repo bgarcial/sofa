@@ -43,7 +43,7 @@ extern "C" int OptionsGroupData_setAttr_selectedItem_impl(PyObject *self, char* 
 }
 extern "C" int OptionsGroupData_setAttr_selectedItem(PyObject *self, PyObject * args, void*)
 {
-    char *str = PyUnicode_AsUTF8(args); // for setters, only one object and not a tuple....
+    char *str = SP_StringAsString(args); // for setters, only one object and not a tuple....
     OptionsGroupData_setAttr_selectedItem_impl(self,str);
     return 0;
 }

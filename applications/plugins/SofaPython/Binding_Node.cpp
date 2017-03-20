@@ -117,7 +117,7 @@ extern "C" PyObject * Node_getChild(PyObject * self, PyObject * args, PyObject *
         {
             PyObject *key = PyList_GetItem(keys,i);
             PyObject *value = PyList_GetItem(values,i);
-            if( !strcmp(PyUnicode_AsUTF8(key),"warning") )
+            if( !strcmp(SP_StringAsString(key),"warning") )
             {
                 if PyBool_Check(value)
                     warning = (value==Py_True);
@@ -229,7 +229,7 @@ extern "C" PyObject * Node_addObject_Impl(PyObject *self, PyObject * args, PyObj
         {
             PyObject *key = PyList_GetItem(keys,i);
             PyObject *value = PyList_GetItem(values,i);
-            if( !strcmp(PyUnicode_AsUTF8(key),"warning") )
+            if( !strcmp(SP_StringAsString(key),"warning") )
             {
                 if PyBool_Check(value)
                     warning = (value==Py_True);
