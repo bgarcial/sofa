@@ -3,8 +3,8 @@ project(SofaPython)
 
 option(SOFAPYTHON_PYTHON3 "Bind on Python 3.x instead of 2.7" ON)
 
-set(SOFAPYTHON_MAJOR_VERSION 0)
-set(SOFAPYTHON_MINOR_VERSION 1)
+set(SOFAPYTHON_MAJOR_VERSION 2)
+set(SOFAPYTHON_MINOR_VERSION 0)
 set(SOFAPYTHON_VERSION ${SOFAPYTHON_MAJOR_VERSION}.${SOFAPYTHON_MINOR_VERSION})
 
 set(SOFA_HAVE_PYTHON 1)
@@ -125,7 +125,10 @@ set(PYTHON_FILES
     python/SofaPython/livecoding.py
 )
 
+set(SOFAPYTHON_COMPILER_FLAGS "-DSOFA_BUILD_SOFAPYTHON")
+
 if(SOFAPYTHON_PYTHON3)
+    set(SOFAPYTHON_COMPILER_FLAGS "${SOFAPYTHON_COMPILER_FLAGS} -DSOFAPYTHON_PYTHON3")
     find_package(PythonLibs 3.0 REQUIRED)
 else(SOFAPYTHON_PYTHON3)
     find_package(PythonLibs 2.7 REQUIRED)
@@ -146,7 +149,6 @@ install(FILES "${CMAKE_BINARY_DIR}/include/SofaPython/config.h" DESTINATION "inc
 # Config files and install rules for pythons scripts
 sofa_set_python_directory(${PROJECT_NAME} "python")
 
-set(SOFAPYTHON_COMPILER_FLAGS "-DSOFA_BUILD_SOFAPYTHON")
 
 # The implementation of Python deliberately breaks strict-aliasing rules, so we
 # compile with -fno-strict-aliasing to prevent the compiler from relying on

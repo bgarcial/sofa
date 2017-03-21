@@ -37,7 +37,7 @@ extern "C" PyObject * Topology_hasPos(PyObject *self, PyObject * /*args*/)
 extern "C" PyObject * Topology_getNbPoints(PyObject *self, PyObject * /*args*/)
 {
     Topology* obj=((PySPtr<Base>*)self)->object->toTopology();
-    return PyLong_FromLong(obj->getNbPoints());
+    return SP_IntFromLong(obj->getNbPoints());
 }
 
 extern "C" PyObject * Topology_setNbPoints(PyObject *self, PyObject * args)

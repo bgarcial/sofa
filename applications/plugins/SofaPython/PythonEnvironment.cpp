@@ -49,6 +49,7 @@ namespace simulation
 
 PyMODINIT_FUNC initModulesHelper(const std::string& name, PyMethodDef* methodDef)
 {
+#ifdef SOFAPYTHON_PYTHON3
     static struct PyModuleDef module = {
        PyModuleDef_HEAD_INIT,
        name.c_str(),   /* name of module */
@@ -62,6 +63,9 @@ PyMODINIT_FUNC initModulesHelper(const std::string& name, PyMethodDef* methodDef
     };
 
     return PyModule_Create(&module);
+#else
+    Py_InitModule(name.c_str(), methodDef);
+#endif
 }
 
 void PythonEnvironment::addModule(const std::string& name, PyMethodDef* methodDef)
@@ -89,8 +93,10 @@ void PythonEnvironment::Init()
     if( putenv( (char*)"PYTHONUNBUFFERED=1" ) )
         SP_MESSAGE_WARNING("failed to set environment variable PYTHONUNBUFFERED")
 
+#ifdef SOFAPYTHON_PYTHON3
     // register Python Module BEFORE Py_Initialize
     registerSofaPythonModule();
+#endif
 
     // Initialize the Python Interpreter.
     Py_Initialize();
@@ -152,6 +158,7 @@ except:\n\
     }
 
     PyRun_SimpleString("from SofaPython.livecoding import onReimpAFile");
+
 }
 
 void PythonEnvironment::Release()
@@ -292,6 +299,8 @@ bool PythonEnvironment::runFile( const char *filename, const std::vector<std::st
 
     if(!arguments.empty())
     {
+#ifdef SOFAPYTHON_PYTHON3
+
 //        Py_SetProgramName(Py_DecodeLocale(argv[0],&size)); // Py_DecodeLocale for python >= 3.5 only
 
         wchar_t**argv = new wchar_t*[arguments.size()+1];
@@ -317,6 +326,26 @@ bool PythonEnvironment::runFile( const char *filename, const std::vector<std::st
             delete [] argv[i];
         }
         delete [] argv;
+#else
+        char**argv = new char*[arguments.size()+1];
+        argv[0] = new char[bareFilename.size()+1];
+        strcpy( argv[0], bareFilename.c_str() );
+        for( size_t i=0 ; i<arguments.size() ; ++i )
+        {
+            argv[i+1] = new char[arguments[i].size()+1];
+            strcpy( argv[i+1], arguments[i].c_str() );
+        }
+
+        Py_SetProgramName(argv[0]); // TODO check what it is doing exactly
+
+        PySys_SetArgv(arguments.size()+1, argv);
+
+        for( size_t i=0 ; i<arguments.size()+1 ; ++i )
+        {
+            delete [] argv[i];
+        }
+        delete [] argv;
+#endif
     }
 
     //  Py_BEGIN_ALLOW_THREADS
@@ -324,6 +353,7 @@ bool PythonEnvironment::runFile( const char *filename, const std::vector<std::st
     PyRun_SimpleString("import sys");
 
     // Load the scene script
+#ifdef SOFAPYTHON_PYTHON3
     PyObject* pDict = PyModule_GetDict(PyImport_AddModule("__main__"));
 
     std::string backupFileName;
@@ -331,7 +361,7 @@ bool PythonEnvironment::runFile( const char *filename, const std::vector<std::st
     if(backupFileObject)
         backupFileName = SP_StringAsString(backupFileObject);
 
-    PyObject* newFileObject = PyUnicode_FromString(filename);
+    PyObject* newFileObject = SP_StringFromString(filename);
     PyDict_SetItemString(pDict, "__file__", newFileObject);
 
     FILE *f = fopen(filename,"r");
@@ -343,8 +373,35 @@ bool PythonEnvironment::runFile( const char *filename, const std::vector<std::st
     }
     int error = PyRun_SimpleFileEx(f, filename, 1);
 
-    backupFileObject = PyUnicode_FromString(backupFileName.c_str());
+    backupFileObject = SP_StringFromString(backupFileName.c_str());
     PyDict_SetItemString(pDict, "__file__", backupFileObject);
+#else
+    char* pythonFilename = strdup(filename);
+    PyObject* scriptPyFile = PyFile_FromString(pythonFilename, (char*)("r"));
+    free(pythonFilename);
+
+    if( !scriptPyFile )
+    {
+        SP_MESSAGE_ERROR("cannot open file:" << filename)
+        PyErr_Print();
+        return false;
+    }
+
+    PyObject* pDict = PyModule_GetDict(PyImport_AddModule("__main__"));
+
+    std::string backupFileName;
+    PyObject* backupFileObject = PyDict_GetItemString(pDict, "__file__");
+    if(backupFileObject)
+        backupFileName = PyString_AsString(backupFileObject);
+
+    PyObject* newFileObject = PyString_FromString(filename);
+    PyDict_SetItemString(pDict, "__file__", newFileObject);
+
+    int error = PyRun_SimpleFileEx(PyFile_AsFile(scriptPyFile), filename, 1);
+
+    backupFileObject = PyString_FromString(backupFileName.c_str());
+    PyDict_SetItemString(pDict, "__file__", backupFileObject);
+#endif
 
     //  Py_END_ALLOW_THREADS
 

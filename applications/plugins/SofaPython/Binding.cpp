@@ -61,46 +61,39 @@
 
 using sofa::PythonFactory;
 
+#ifdef SOFAPYTHON_PYTHON3
+    PyMODINIT_FUNC PyInit_Sofa(void)
+    {
+        static struct PyModuleDef module = {
+           PyModuleDef_HEAD_INIT,
+           "Sofa",   /* name of module */
+           NULL, /* module documentation, may be NULL */
+           -1,       /* size of per-interpreter state of the module, or -1 if the module keeps state in global variables. */
+           SofaModuleMethods,
+           NULL, /*Currently unused, should be NULL. */ \
+           NULL, /*A traversal function to call during GC traversal of the module object, or NULL if not needed.*/
+           NULL, /*A clear function to call during GC clearing of the module object, or NULL if not needed. */
+           NULL /*A function to call during deallocation of the module object, or NULL if not needed. */
+        };
+        PythonFactory::s_sofaPythonModule = PyModule_Create(&module);
+        return PythonFactory::s_sofaPythonModule;
+    }
 
-PyMODINIT_FUNC PyInit_Sofa(void)
-{
-    static struct PyModuleDef module = {
-       PyModuleDef_HEAD_INIT,
-       "Sofa",   /* name of module */
-       NULL, /* module documentation, may be NULL */
-       -1,       /* size of per-interpreter state of the module, or -1 if the module keeps state in global variables. */
-       SofaModuleMethods,
-       NULL, /*Currently unused, should be NULL. */ \
-       NULL, /*A traversal function to call during GC traversal of the module object, or NULL if not needed.*/
-       NULL, /*A clear function to call during GC clearing of the module object, or NULL if not needed. */
-       NULL /*A function to call during deallocation of the module object, or NULL if not needed. */
-    };
-    PythonFactory::s_sofaPythonModule = PyModule_Create(&module);
-    return PythonFactory::s_sofaPythonModule;
+    void registerSofaPythonModule()
+    {
+        PyImport_AppendInittab("Sofa",PyInit_Sofa); // must be run before Py_Initialize()
 
-
-}
-
-
-void registerSofaPythonModule()
-{
-    PyImport_AppendInittab("Sofa",PyInit_Sofa); // must be run before Py_Initialize()
-
-}
+    }
+#endif
 
 void bindSofaPythonModule()
 {
-    //PyImport_AppendInittab( (char*)"Sofa", &initSofa );
 
-   // PythonFactory::s_sofaPythonModule = PyInit_Sofa();
-
-
-//    printf("PyModule_Create %s\n",SP_StringAsString(PyObject_Str(PythonFactory::s_sofaPythonModule)));
-
-//    if (!PythonFactory::s_sofaPythonModule || PythonFactory::s_sofaPythonModule==Py_None)
-//            printf(">>>>>>>>>>>>>>>>>>>>>>>>> bindSofaPythonModule NONE\n");
-
+#ifdef SOFAPYTHON_PYTHON3
     PyImport_ImportModule("Sofa");
+#else
+    PythonFactory::s_sofaPythonModule = SP_INIT_MODULE(Sofa)
+#endif
 
     // non Base-Inherited types
 

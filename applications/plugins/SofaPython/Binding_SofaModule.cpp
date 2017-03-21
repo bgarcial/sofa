@@ -558,7 +558,7 @@ extern "C" PyObject * Sofa_loadPythonSceneWithArguments(PyObject * /*self*/, PyO
         Py_RETURN_NONE;
     }
 
-    // PyUnicode_Check(PyTuple_GetItem(args,0)) // to check the arg type and raise an error
+    // SP_StringCheck(PyTuple_GetItem(args,0)) // to check the arg type and raise an error
     char *filename = SP_StringAsString(PyTuple_GetItem(args,0));
 
     if( sofa::helper::system::SetDirectory::GetFileName(filename).empty() ) // no filename

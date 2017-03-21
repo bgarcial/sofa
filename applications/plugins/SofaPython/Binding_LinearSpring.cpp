@@ -34,7 +34,7 @@ extern "C" PyObject * LinearSpring_getAttr_Index1(PyObject *self, void*)
         PyErr_BadArgument();
         return NULL;
     }
-    return PyLong_FromLong(obj->m1);
+    return SP_IntFromLong(obj->m1);
 }
 
 extern "C" int LinearSpring_setAttr_Index1(PyObject *self, PyObject * args, void*)
@@ -58,7 +58,7 @@ extern "C" PyObject * LinearSpring_getAttr_Index2(PyObject *self, void*)
         PyErr_BadArgument();
         return NULL;
     }
-    return PyLong_FromLong(obj->m2);
+    return SP_IntFromLong(obj->m2);
 }
 
 extern "C" int LinearSpring_setAttr_Index2(PyObject *self, PyObject * args, void*)

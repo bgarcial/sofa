@@ -107,7 +107,7 @@ extern "C" PyObject * BaseContext_createObject_Impl(PyObject * self, PyObject * 
             else
             {
             //    std::cout << SP_StringAsString(PyList_GetItem(keys,i)) << "=\"" << SP_StringAsString(PyObject_Str(PyList_GetItem(values,i))) << "\"" << std::endl;
-                if (PyUnicode_Check(value))
+                if (SP_StringCheck(value))
                     desc.setAttribute(SP_StringAsString(key),SP_StringAsString(value));
                 else
                     desc.setAttribute(SP_StringAsString(key),SP_StringAsString(PyObject_Str(value)));

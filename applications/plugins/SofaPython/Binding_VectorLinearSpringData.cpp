@@ -78,7 +78,7 @@ SP_CLASS_ATTR_SET(VectorLinearSpringData,value)(PyObject *self, PyObject * args,
     DataBinding_VectorLinearSpring* data=((PyPtr<DataBinding_VectorLinearSpring>*)self)->object; // TODO: check dynamic cast
 
     // string
-    if (PyUnicode_Check(args))
+    if (SP_StringCheck(args))
     {
         char *str = SP_StringAsString(args); // for setters, only one object and not a tuple....
 

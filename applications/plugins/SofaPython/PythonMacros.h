@@ -41,9 +41,19 @@
 // Python 2 / 3 compatability macros
 // =============================================================================
 #ifdef SOFAPYTHON_PYTHON3
-    #define SP_StringAsString SP_StringAsString
+    #define SP_StringAsString PyUnicode_AsUTF8
+    #define SP_StringFromString PyUnicode_FromString
+    #define SP_StringCheck PyUnicode_Check
+    #define SP_IntFromLong PyLong_FromLong
+    #define SP_IntAsLong PyLong_AsLong
+    #define SP_IntCheck PyLong_Check
 #else //SOFAPYTHON_PYTHON3
     #define SP_StringAsString PyString_AsString
+    #define SP_StringFromString PyString_FromString
+    #define SP_StringCheck PyString_Check
+    #define SP_IntFromLong PyInt_FromLong
+    #define SP_IntAsLong PyInt_AsLong
+    #define SP_IntCheck PyInt_Check
 #endif //SOFAPYTHON_PYTHON3
 
 
@@ -69,6 +79,9 @@
 // =============================================================================
 
 // PyObject *MyModule = SP_INIT_MODULE(MyModuleName)
+#ifndef SOFAPYTHON_PYTHON3
+#define SP_INIT_MODULE(MODULENAME) Py_InitModule(#MODULENAME,MODULENAME##ModuleMethods);
+#endif
 
 //#define SP_INIT_MODULE(result,MODULENAME) { \
 //        static struct PyModuleDef module = { \
@@ -359,7 +372,7 @@ static PyTypeObject DummyChild_PyTypeObject = {
     extern "C" PyObject * C##_getAttr_##D(PyObject *self, void*) \
     { \
         C::SPtr obj=((PySPtr<C>*)self)->object;  \
-        return PyUnicode_FromString(obj->findData(#D)->getValueString().c_str()); \
+        return SP_StringFromString(obj->findData(#D)->getValueString().c_str()); \
     } \
     extern "C" int C##_setAttr_##D(PyObject *self, PyObject * args, void*) \
     { \

@@ -185,7 +185,7 @@ extern "C" PyObject * Node_getPathName(PyObject * self, PyObject * /*args*/)
     // BaseNode is not bound in SofaPython, so getPathName is bound in Node instead
     Node* node=down_cast<Node>(((PySPtr<Base>*)self)->object->toBaseNode());
 
-    return PyUnicode_FromString(node->getPathName().c_str());
+    return SP_StringFromString(node->getPathName().c_str());
 }
 
 extern "C" PyObject * Node_getRootPath(PyObject * self, PyObject * /*args*/)
@@ -193,14 +193,14 @@ extern "C" PyObject * Node_getRootPath(PyObject * self, PyObject * /*args*/)
     // BaseNode is not bound in SofaPython, so getRootPath is bound in Node instead
     Node* node=down_cast<Node>(((PySPtr<Base>*)self)->object->toBaseNode());
 
-    return PyUnicode_FromString(node->getRootPath().c_str());
+    return SP_StringFromString(node->getRootPath().c_str());
 }
 
 // the same as 'getPathName' with a extra prefix '@'
 extern "C" PyObject * Node_getLinkPath(PyObject * self, PyObject * /*args*/)
 {
     Node* node=down_cast<Node>(((PySPtr<Base>*)self)->object->toBaseNode());
-    return PyUnicode_FromString(("@"+node->getPathName()).c_str());
+    return SP_StringFromString(("@"+node->getPathName()).c_str());
 }
 
 extern "C" PyObject * Node_createChild(PyObject *self, PyObject * args)

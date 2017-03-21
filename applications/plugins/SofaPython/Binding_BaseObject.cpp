@@ -100,7 +100,7 @@ extern "C" PyObject * BaseObject_getPathName(PyObject * self, PyObject * /*args*
 {
     BaseObject* obj=((PySPtr<Base>*)self)->object->toBaseObject();
 
-    return PyUnicode_FromString(obj->getPathName().c_str());
+    return SP_StringFromString(obj->getPathName().c_str());
 }
 
 // the same as 'getPathName' with a extra prefix '@'
@@ -108,7 +108,7 @@ extern "C" PyObject * BaseObject_getLinkPath(PyObject * self, PyObject * /*args*
 {
     BaseObject* obj=((PySPtr<Base>*)self)->object->toBaseObject();
 
-    return PyUnicode_FromString(("@"+obj->getPathName()).c_str());
+    return SP_StringFromString(("@"+obj->getPathName()).c_str());
 }
 
 
