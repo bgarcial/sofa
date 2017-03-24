@@ -131,7 +131,7 @@ extern "C" PyObject * BaseObject_getName(PyObject * self, PyObject * /*args*/)
     // BaseNode is not binded in SofaPython, so getChildNode is binded in Node instead of BaseNode
     BaseObject* node=dynamic_cast<BaseObject*>(((PySPtr<Base>*)self)->object.get());
 
-    return PyString_FromString((node->getName()).c_str());
+    return SP_StringFromString((node->getName()).c_str());
 }
 
 

@@ -67,7 +67,7 @@ float pyConvert<float>( PyObject* obj )
 template < >
 unsigned int pyConvert<unsigned int>( PyObject* obj )
 {
-    return static_cast<unsigned int>(PyInt_AsLong(obj) );
+    return static_cast<unsigned int>(SP_IntAsLong(obj) );
 }
 
 template < class T >

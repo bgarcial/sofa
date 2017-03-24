@@ -32,7 +32,7 @@ using namespace sofa::core::objectmodel;
 SP_CLASS_ATTR_GET(DataFileName, fullPath)(PyObject *self, void*)
 {
     DataFileName* dataFilename = down_cast<DataFileName>( ((PyPtr<BaseData>*)self)->object );
-    return PyString_FromString(dataFilename->getFullPath().c_str());
+    return SP_StringFromString(dataFilename->getFullPath().c_str());
 }
 
 
