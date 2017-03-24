@@ -33,9 +33,9 @@ class Controller(Sofa.PythonScriptController):
         lines = f.readlines()
 
         # print
-        print '{0}:{1}: {2}'.format(os.path.abspath(info.filename),
-                                            info.lineno, 'Failure')
-        print '$$$$$ Reason:', msg
+        print ('{0}:{1}: {2}'.format(os.path.abspath(info.filename),
+                                            info.lineno, 'Failure'))
+        print ('$$$$$ Reason:', msg)
         # print #lines[ info.lineno - 1 ]
         self.node.sendScriptEvent('failure', 0)
         self.root.findData('animate').value = 0

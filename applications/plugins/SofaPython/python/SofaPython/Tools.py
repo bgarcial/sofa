@@ -4,7 +4,7 @@ import os, os.path
 import json
 import glob
 
-import units
+#import units
 
 def listToStr(x):
     """ concatenate lists for use with data.
@@ -44,7 +44,7 @@ def getNode(rootNode, path):
             continue
         currentNode = currentNode.getChild(c)
         if currentNode is None:
-            print "SofaPython.Tools.findNode: can't find node at", path
+            print ("SofaPython.Tools.findNode: can't find node at", path)
             return None
     return currentNode
 
@@ -63,7 +63,7 @@ def meshLoader(parentNode, filename, name=None, **args):
     elif ext == ".stl":
         return parentNode.createObject('MeshSTLLoader', filename=filename, name=_name, **args)
     else:
-        print "ERROR SofaPython.Tools.meshLoader: unknown mesh extension:", ext
+        print ("ERROR SofaPython.Tools.meshLoader: unknown mesh extension:", ext)
         return None
 
 class Material:
@@ -168,18 +168,18 @@ class SceneDataIO:
                 except IOError:
                     raise
 
-        print "[SceneDataIO]: the scene:", os.path.basename(__file__), "data has been save into the directory:", directory
+        print ("[SceneDataIO]: the scene:", os.path.basename(__file__), "data has been save into the directory:", directory)
         return 1
 
     def readData(self, directory=None):
 
         # Lets check that the directory exists and it is not empty
         if directory == None or not os.path.isdir(directory):
-            print "[SceneDataIO]: There is no directory where component data has been stored."
+            print ("[SceneDataIO]: There is no directory where component data has been stored.")
             return -1
 
         if not len(os.listdir(directory)):
-            print "[SceneDataIO]: The selected directory:", directory, "is empty."
+            print ("[SceneDataIO]: The selected directory:", directory, "is empty.")
             return -1
 
         nb_json = 0
@@ -187,7 +187,7 @@ class SceneDataIO:
             if file.endswith('.json'):
                 nb_json = nb_json +1
         if not nb_json:
-            print "[SceneDataIO]: The selected directory:", directory, "do not contains any json files."
+            print ("[SceneDataIO]: The selected directory:", directory, "do not contains any json files.")
             return
 
         # Lets get all the components of the scene
@@ -217,7 +217,7 @@ class SceneDataIO:
                         component.findData(name).value = value.encode("ascii")
             component.reinit()
 
-        print "[SceneDataIO]: the previous scene state has been restored."
+        print ("[SceneDataIO]: the previous scene state has been restored.")
 
         return 1
 
@@ -259,7 +259,7 @@ class ComponentDataIO:
             _filename = self.component.name+".json"
         with open(_filename,'w') as file:
             json.dump(componentData, file)
-        print "[ComponentDataIO]: component:", self.component.name, "data written to:", _filename
+        print ("[ComponentDataIO]: component:", self.component.name, "data written to:", _filename)
         
     def readData(self, filename=None):
         _filename = filename
@@ -269,7 +269,7 @@ class ComponentDataIO:
             componentData = json.load(file)
             for d in self.dataList:
                 self.component.findData(d).value = componentData[d]
-        print "[ComponentDataIO]: component:", self.component.name, "data read from:", _filename
+        print ("[ComponentDataIO]: component:", self.component.name, "data read from:", _filename)
         
         
 def localPath( localfile, filename ):

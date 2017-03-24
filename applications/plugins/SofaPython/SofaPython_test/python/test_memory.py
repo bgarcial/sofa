@@ -22,7 +22,7 @@ class AllocationTestController(Sofa.PythonScriptController):
 
     def add(self):
         # adding components in the scene, that increment a counter at each construction
-        for i in xrange(10):
+        for i in range(10):
             self.node.createObject('PythonTestAllocationCounter')
 
     def remove(self):
@@ -33,7 +33,7 @@ class AllocationTestController(Sofa.PythonScriptController):
     def addSub(self):
         # adding components in subnode, that increment a counter at each construction
         self.subnode = self.node.createChild('subnode')
-        for i in xrange(10):
+        for i in range(10):
             self.subnode.createObject('PythonTestAllocationCounter')
 
     def removeSub(self):
