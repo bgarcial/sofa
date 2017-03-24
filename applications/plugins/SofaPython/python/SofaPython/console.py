@@ -47,7 +47,7 @@ if __name__ == '__main__':
         def __enter__(self):
             try:
                 readline.read_history_file(self.filename)
-                # print 'loaded console history from', self.filename
+                # print ('loaded console history from', self.filename)
             except IOError:
                 pass
             return self
@@ -78,17 +78,17 @@ if __name__ == '__main__':
     # main loop
     try:
         with History( "~/.sofa-console" ):
-            print 'console started'
+            print ('console started')
             while True:
                 send( raw_input( recv() ) )
 
     except KeyboardInterrupt:
-        print 'console exited (SIGINT)'
+        print ('console exited (SIGINT)')
     except EOFError:
         ppid = os.getppid()
         try:
             os.kill(os.getppid(), signal.SIGTERM)
-            print 'console exited (EOF), terminating parent process'
+            print ('console exited (EOF), terminating parent process')
         except OSError:
             pass
 
@@ -189,7 +189,7 @@ else:
     #     os.system('stty sane')
 
     # def exit(*args):
-    #     print 'exit'
+    #     print ('exit')
     #     cleanup()
 
     # sys.exit(0) forces cleanup *from python* before the gui
@@ -213,7 +213,7 @@ else:
     #     old = signal.getsignal(sig)
         
     #     def h(*args):
-    #         print args
+    #         print (args)
     #         sub.terminate()
     #         signal.signal(sig, old)
     #         os.kill(os.getpid(), sig)

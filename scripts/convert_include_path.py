@@ -16,12 +16,12 @@ import fileinput
 from os import walk
 
 def usage():
-    print 'usage: python convert_include_path.py -i <pathes_file> -d <directory_to_parse>'
+    print ('usage: python convert_include_path.py -i <pathes_file> -d <directory_to_parse>')
 
 
 def main(argv):
     matchfile, path = readOpt(argv)
-    print 'Parsing directory \'' + path + '\' with matches from file \'' + matchfile + '\'\n'
+    print ('Parsing directory \'' + path + '\' with matches from file \'' + matchfile + '\'\n')
 
     matches = loadMatches(matchfile)
 
@@ -41,7 +41,7 @@ def readOpt(argv):
     try:
         opts, args = getopt.getopt(argv, "hi: d:")
     except getopt.GetoptError:
-        print 'Error while reading the arguments'
+        print ('Error while reading the arguments')
         sys.exit(1)
 
     matchfile = ''
@@ -75,7 +75,7 @@ def loadMatches(matchfile):
 
 # Modify the pathes of the file #include directives if necessary
 def processFile(file, matches):
-    print '*** Processing file \'' + file + '\'\n'
+    print ('*** Processing file \'' + file + '\'\n')
 
     filecontent = []
     with open(file, 'r') as f:
@@ -91,7 +91,7 @@ def processFile(file, matches):
             if includePath in matches:
                 newline = line[:match.start(1)] + matches[includePath] + line[match.end(1):]
                 filecontent[i] = newline
-                print '      ' + line + '   => ' +  newline
+                print ('      ' + line + '   => ' +  newline)
         i += 1
 
     with open(file, 'w') as f:

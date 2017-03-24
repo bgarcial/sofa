@@ -8,9 +8,9 @@ import sys
 
 def checkSysPathDuplicate():
 #    for p in sys.path:
-#        print p
+#        print (p)
     for p in sys.path:
-#        print p
+#        print (p)
 #        if (sys.path.count(p)>1):
 #           Sofa.msg_info("Found duplicate path : "+p)
         if not EXPECT_EQ(1,sys.path.count(p),"sys.path.count("+p+")"):

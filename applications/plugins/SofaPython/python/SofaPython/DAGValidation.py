@@ -24,16 +24,16 @@ class Visitor(object):
 ## checking that mapping graph is equivalent to node graph
 ## checking that independent dofs are not under other dofs in the scene graph
     def __init__(self):
-        #print "DAGValidationVisitor"
+        #print ("DAGValidationVisitor")
         self.error = []
 
     def treeTraversal(self):
-        #print 'ValidationVisitor treeTraversal'
+        #print ('ValidationVisitor treeTraversal')
         return -1 # dag
 
     def processNodeTopDown(self,node):
 
-        #print node.name
+        #print (node.name)
 
         state = node.getMechanicalState()
 
@@ -54,7 +54,7 @@ class Visitor(object):
 
         else: # mapped dofs
 
-            #print mapping.getName()
+            #print (mapping.getName())
             from_dof = mapping.getFrom()
             parent_node = mapping.getContext().getParents()
 
@@ -65,27 +65,27 @@ class Visitor(object):
             from_node_path = []
             for f in from_dof:
                 from_node_path.append( f.getContext().getPathName() )
-            #print parent_node_path
+            #print (parent_node_path)
 
             for f in from_node_path:
-                #print f
+                #print (f)
                 if not f in parent_node_path:
                     err = "ERROR "
                     err += "'"+mapping.getContext().getPathName()+"/"+mapping.name+"': "
                     err += "'"+ f + "' should be a parent node"
                     self.error.append(err)
-                    #print err
+                    #print (err)
 
             for p in parent_node_path:
-                #print p
+                #print (p)
                 if not p in from_node_path:
                     err = "ERROR "
                     err += "'"+mapping.getContext().getPathName()+"/"+mapping.name+"': "
                     err += "'"+p + "' should NOT be a parent node"
                     self.error.append(err)
-                    #print err
+                    #print (err)
 
-        #print "==================="
+        #print ("===================")
         return True
 
     def processNodeBottomUp(self,node):
@@ -100,25 +100,25 @@ def test( node, silent=False ):
 ## return a list of errors
 
     if not silent:
-        print ""
-        print "====== SofaPython.DAGValidation.test ======================="
-        print ""
-        print "Validating scene from node '/" + node.getPathName() + "'..."
+        print ("")
+        print ("====== SofaPython.DAGValidation.test =======================")
+        print ("")
+        print ("Validating scene from node '/" + node.getPathName() + "'...")
     
     vis = Visitor()
     node.executeVisitor(vis)
     
     if not silent:
         if len(vis.error) is 0:
-            print "... VALIDATED"
+            print ("... VALIDATED")
         else:
-            print "... NOT VALID"
-            print ""
+            print ("... NOT VALID")
+            print ("")
             for e in vis.error:
-                print e
+                print (e)
 
-        print ""
-        print "=============================================================="
+        print ("")
+        print ("==============================================================")
         sys.stdout.flush()
 
     return vis.error
