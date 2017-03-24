@@ -79,7 +79,7 @@ def createScene(rootNode):
 	# input node
 	Input = rootNode.createChild('Input')
 	# The PythonScriptController gathers events from input devices and populates the Mechanical state 
-	Input.createObject('PythonScriptController', filename="PythonScene2.py",classname="KeyboardControl")
+	Input.createObject('PythonScriptController', filename="PythonScene2.pyscn",classname="KeyboardControl")
 	global DOFs
 	DOFs = Input.createObject('MechanicalObject',template="Rigid", name="DOFs", position="0 0 0  0  0  0  1.0")
 	InputVisuAvatar = Input.createChild('VisuAvatar')

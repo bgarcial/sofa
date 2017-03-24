@@ -30,18 +30,18 @@ def testNodes(node):
 
 class SofaVisitor(object):
 	def __init__(self,name):
-		print 'SofaVisitor constructor name='+name
+		print ('SofaVisitor constructor name='+name)
 		self.name = name
 
 	def processNodeTopDown(self,node):
-		print 'SofaVisitor "'+self.name+'" processNodeTopDown node='+node.findData('name').value
+		print ('SofaVisitor "'+self.name+'" processNodeTopDown node='+node.findData('name').value)
 		return True
 
 	def processNodeBottomUp(self,node):
-		print 'SofaVisitor "'+self.name+'" processNodeBottomUp node='+node.findData('name').value
+		print ('SofaVisitor "'+self.name+'" processNodeBottomUp node='+node.findData('name').value)
 		
 	def treeTraversal(self):
-		print 'SofaVisitor "'+self.name+'" treeTraversal'
+		print ('SofaVisitor "'+self.name+'" treeTraversal')
 		return -1 # dag
  
   
@@ -56,12 +56,12 @@ class Visitor(Sofa.PythonScriptController):
 	# called once the script is loaded
 	def onLoaded(self,node):
 		self.rootNode = node.getRoot()
-		print 'Controller script loaded from node %s'+node.findData('name').value
+		print ('Controller script loaded from node %s'+node.findData('name').value)
 		return 0
 
 	# optionnally, script can create a graph...
 	def createGraph(self,node):
-		print 'createGraph called (python side)'
+		print ('createGraph called (python side)')
 
 		#uncomment to create nodes
 		testNodes(node)
@@ -73,7 +73,7 @@ class Visitor(Sofa.PythonScriptController):
 
 	# called once graph is created, to init some stuff...
 	def initGraph(self,node):
-		print 'initGraph called (python side)'
+		print ('initGraph called (python side)')
 
 		v = SofaVisitor('PythonVisitor')
 		node.executeVisitor(v)

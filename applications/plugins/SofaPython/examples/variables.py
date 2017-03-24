@@ -5,14 +5,14 @@ class Variables(Sofa.PythonScriptController):
 
 	def onLoaded(self,node):
 	  
-		print '############## Python example: variables ##############'
-		print '### This example scene demonstrates how to pass string variables from a SOFA scn to the python script'
-		print '### Note that the variables can be modified in the SOFA GUI'
-		print '##########################################################'
+		print ('############## Python example: variables ##############')
+		print ('### This example scene demonstrates how to pass string variables from a SOFA scn to the python script')
+		print ('### Note that the variables can be modified in the SOFA GUI')
+		print ('##########################################################')
 		
 		variables = self.findData('variables').value
 		
-		print 'At initialization, variables = ', variables
+		print ('At initialization, variables = ', variables)
 		
 		self.timestep = 0
 			
@@ -35,4 +35,4 @@ class Variables(Sofa.PythonScriptController):
 	def onEndAnimationStep(self,dt):
 	  
 		variables = self.findData('variables').value # just to be sure to consider the right variables
-		print 'During simulation, variables can be modified (even manually in SOFA GUI) = ', variables
+		print ('During simulation, variables can be modified (even manually in SOFA GUI) = ', variables)
