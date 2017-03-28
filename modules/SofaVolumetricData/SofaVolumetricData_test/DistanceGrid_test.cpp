@@ -65,9 +65,18 @@ struct DistanceGrid_test : public Sofa_test<SReal>
         EXPECT_EQ(grid.getCubeDim(), 10);
     }
 
-    void checInvalidConstructorsCube(int x, int y, int z,
-                                     float mx, float my, float mz,
-                                     float ex, float ey, float ez){
+    void checkValidLoader(const std::string& name){
+        MessageAsTestFailure warning(Message::Warning);
+        MessageAsTestFailure error(Message::Error);
+
+        DistanceGrid* grid = DistanceGrid::load(name) ;
+        ASSERT_TRUE(grid!=nullptr) ;
+        EXPECT_EQ(grid.getNx(), 64) ;
+        EXPECT_EQ(grid.getNy(), 64) ;
+        EXPECT_EQ(grid.getNz(), 64) ;
+    }
+
+    void checkLoadFromFile(){
         MessageAsTestFailure warning(Message::Warning);
         ExpectMessage error(Message::Error) ;
 
@@ -75,8 +84,13 @@ struct DistanceGrid_test : public Sofa_test<SReal>
     }
 };
 
-TEST_F(DistanceGrid_test, chekcValidConstructorsCube) {
-    ASSERT_NO_THROW(this->chekcValidConstructorsCube()) ;
+TEST_F(DistanceGrid_test, checkValidLoader) {
+    ASSERT_NO_THROW(this->checkValidLoader("#cube")) ;
+    ASSERT_NO_THROW(this->checkValidLoader("cube.vtk")) ;
+    ASSERT_NO_THROW(this->checkValidLoader("cube.fmesh")) ;
+    ASSERT_NO_THROW(this->checkValidLoader("cube.obj")) ;
+    ASSERT_NO_THROW(this->checkValidLoader("cube.vtk")) ;
+
 }
 
 TEST_F(DistanceGrid_test, chekcInvalidConstructorsCube) {
@@ -92,6 +106,21 @@ TEST_F(DistanceGrid_test, chekcInvalidConstructorsCube) {
         ASSERT_NO_THROW(this->chekcInvalidConstructorsCube(v[0],v[1],v[2], v[3], v[4], v[5], v[6], v[7], v[8])) ;
     }
 }
+
+TEST_F(DistanceGrid_test, chekLoadFromName) {
+    helper::vector< helper::vector< float >> values = {
+        {-10, 10, 10,  -1,-1,-1,  1, 1,1},
+        { 10,-10, 10,  -1,-1,-1,  1, 1,1},
+        { 10, 10,-10,  -1,-1,-1,  1, 1,1},
+        { 10, 10,  0,  -1,-1,-1,  1, 1,1},
+        { 10,  0, 10,  -1,-1,-1,  1, 1,1},
+        {  0, 10,  0,  -1,-1,-1,  1, 1,1},
+        {  0, 10,  0,  -1, 1,-1,  1,-1,1} };
+    for(auto& v : values ){
+        ASSERT_NO_THROW(this->chekcInvalidConstructorsCube(v[0],v[1],v[2], v[3], v[4], v[5], v[6], v[7], v[8])) ;
+    }
+}
+
 
 
 } // __distance_grid__

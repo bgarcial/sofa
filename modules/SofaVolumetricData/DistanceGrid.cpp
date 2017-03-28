@@ -238,7 +238,7 @@ DistanceGrid* DistanceGrid::load(const std::string& filename,
         //std::cout<< "Distance grid creation DONE."<<std::endl;
         return grid;
 #else
-        msg_error("DistanceGrid")<<"Loading a .fmesh file requires the FlowVR library (activatable with the CMake option 'SOFA_BUILD_MINIFLOWVR')";
+        msg_error("DistanceGrid")<<"Loading a .fmesh file requires the FlowVR library (activable with the CMake option 'SOFA_BUILD_MINIFLOWVR')";
         return NULL;
 #endif
     }
