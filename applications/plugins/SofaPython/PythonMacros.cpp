@@ -14,24 +14,21 @@
 #include <SofaBaseTopology/GridTopology.h>
 #include <SofaBaseTopology/RegularGridTopology.h>
 #include <SofaBaseMechanics/MechanicalObject.h>
+#include <SofaBaseTopology/PointSetTopologyModifier.h>
 #include <SofaMiscMapping/SubsetMultiMapping.h>
+#include <SofaBaseTopology/TriangleSetTopologyModifier.h>
 #include <sofa/core/BaseMapping.h>
-
-
 #include "PythonScriptController.h"
-
-
 
 typedef sofa::component::container::MechanicalObject< sofa::defaulttype::Vec3Types > MechanicalObject3;
 typedef sofa::component::mapping::SubsetMultiMapping< sofa::defaulttype::Vec3Types, sofa::defaulttype::Vec3Types > SubsetMultiMapping3_to_3;
-
 
 
 void printPythonExceptions()
 {
     PyObject *ptype, *pvalue /* error msg */, *ptraceback /*stack snapshot and many other informations (see python traceback structure)*/;
     PyErr_Fetch(&ptype, &pvalue, &ptraceback);
-    if( pvalue ) SP_MESSAGE_EXCEPTION( PyUnicode_AsUTF8(pvalue) )
+    if( pvalue ) SP_MESSAGE_EXCEPTION( SP_StringAsString(pvalue) )
 
     // TODO improve the error message by using ptraceback
 }

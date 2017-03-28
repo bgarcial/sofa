@@ -100,7 +100,7 @@ SP_CLASS_ATTR_GET(AssembledSystem,m)(PyObject *self, void*)
         PyErr_BadArgument();
         Py_RETURN_NONE;
     }
-    return PyLong_FromLong(obj->m);
+    return SP_IntFromLong(obj->m);
 }
 SP_CLASS_ATTR_SET(AssembledSystem,m)(PyObject *self, PyObject * args, void*)
 {
@@ -122,7 +122,7 @@ SP_CLASS_ATTR_GET(AssembledSystem,n)(PyObject *self, void*)
         PyErr_BadArgument();
         Py_RETURN_NONE;
     }
-    return PyLong_FromLong(obj->n);
+    return SP_IntFromLong(obj->n);
 }
 SP_CLASS_ATTR_SET(AssembledSystem,n)(PyObject *self, PyObject * args, void*)
 {

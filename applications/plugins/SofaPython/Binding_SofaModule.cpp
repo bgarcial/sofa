@@ -95,7 +95,7 @@ extern "C" PyObject * Sofa_createObject(PyObject * /*self*/, PyObject * args, Py
         PyObject* values = PyDict_Values(kw);
         for (int i=0; i<PyDict_Size(kw); i++)
         {
-            desc.setAttribute(PyUnicode_AsUTF8(PyList_GetItem(keys,i)),PyUnicode_AsUTF8(PyList_GetItem(values,i)));
+            desc.setAttribute(SP_StringAsString(PyList_GetItem(keys,i)),SP_StringAsString(PyList_GetItem(values,i)));
         }
         Py_DecRef(keys);
         Py_DecRef(values);
@@ -558,15 +558,15 @@ extern "C" PyObject * Sofa_loadPythonSceneWithArguments(PyObject * /*self*/, PyO
         Py_RETURN_NONE;
     }
 
-    // PyUnicode_Check(PyTuple_GetItem(args,0)) // to check the arg type and raise an error
-    char *filename = PyUnicode_AsUTF8(PyTuple_GetItem(args,0));
+    // SP_StringCheck(PyTuple_GetItem(args,0)) // to check the arg type and raise an error
+    char *filename = SP_StringAsString(PyTuple_GetItem(args,0));
 
     if( sofa::helper::system::SetDirectory::GetFileName(filename).empty() ) // no filename
         Py_RETURN_NONE;
 
     std::vector<std::string> arguments;;
     for( size_t i=1 ; i<argSize ; i++ )
-        arguments.push_back( PyUnicode_AsUTF8(PyTuple_GetItem(args,i)) );
+        arguments.push_back( SP_StringAsString(PyTuple_GetItem(args,i)) );
 
     sofa::simulation::SceneLoaderPY loader;
     sofa::simulation::Node::SPtr node = loader.loadSceneWithArguments(filename,arguments);

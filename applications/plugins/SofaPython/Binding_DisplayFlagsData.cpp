@@ -63,7 +63,6 @@ SP_CLASS_METHODS_END
         bool b = (Py_True==args); \
         DisplayFlags* flags = data->beginEdit(); \
         flags->setShow##flagName(b); \
-        /*printf("%s %d\n",#flagName,b);*/ \
         data->endEdit(); \
         return 0; \
     }

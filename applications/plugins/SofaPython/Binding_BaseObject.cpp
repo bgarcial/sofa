@@ -100,7 +100,7 @@ extern "C" PyObject * BaseObject_getPathName(PyObject * self, PyObject * /*args*
 {
     BaseObject* obj=((PySPtr<Base>*)self)->object->toBaseObject();
 
-    return PyUnicode_FromString(obj->getPathName().c_str());
+    return SP_StringFromString(obj->getPathName().c_str());
 }
 
 // the same as 'getPathName' with a extra prefix '@'
@@ -108,7 +108,30 @@ extern "C" PyObject * BaseObject_getLinkPath(PyObject * self, PyObject * /*args*
 {
     BaseObject* obj=((PySPtr<Base>*)self)->object->toBaseObject();
 
-    return PyUnicode_FromString(("@"+obj->getPathName()).c_str());
+    return SP_StringFromString(("@"+obj->getPathName()).c_str());
+}
+
+
+extern "C" PyObject * BaseObject_getSlaves(PyObject * self, PyObject * /*args*/)
+{
+    BaseObject* node=dynamic_cast<BaseObject*>(((PySPtr<Base>*)self)->object.get());
+
+    const BaseObject::VecSlaves& slaves = node->getSlaves();
+
+    PyObject *list = PyList_New(slaves.size());
+
+    for (unsigned int i=0; i<slaves.size(); ++i)
+        PyList_SetItem(list,i,sofa::PythonFactory::toPython(slaves[i].get()));
+
+    return list;
+}
+
+extern "C" PyObject * BaseObject_getName(PyObject * self, PyObject * /*args*/)
+{
+    // BaseNode is not binded in SofaPython, so getChildNode is binded in Node instead of BaseNode
+    BaseObject* node=dynamic_cast<BaseObject*>(((PySPtr<Base>*)self)->object.get());
+
+    return SP_StringFromString((node->getName()).c_str());
 }
 
 
@@ -124,6 +147,8 @@ SP_CLASS_METHOD(BaseObject,getMaster)
 SP_CLASS_METHOD(BaseObject,setSrc)
 SP_CLASS_METHOD(BaseObject,getPathName)
 SP_CLASS_METHOD(BaseObject,getLinkPath)
+SP_CLASS_METHOD(BaseObject,getSlaves)
+SP_CLASS_METHOD(BaseObject,getName)
 SP_CLASS_METHODS_END
 
 

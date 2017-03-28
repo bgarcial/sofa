@@ -99,18 +99,18 @@ extern "C" PyObject * BaseContext_createObject_Impl(PyObject * self, PyObject * 
             PyObject *key = PyList_GetItem(keys,i);
             PyObject *value = PyList_GetItem(values,i);
 
-            if( !strcmp( PyUnicode_AsUTF8(key), "warning") )
+            if( !strcmp( SP_StringAsString(key), "warning") )
             {
                 if PyBool_Check(value)
                     warning = (value==Py_True);
             }
             else
             {
-            //    std::cout << PyUnicode_AsUTF8(PyList_GetItem(keys,i)) << "=\"" << PyUnicode_AsUTF8(PyObject_Str(PyList_GetItem(values,i))) << "\"" << std::endl;
-                if (PyUnicode_Check(value))
-                    desc.setAttribute(PyUnicode_AsUTF8(key),PyUnicode_AsUTF8(value));
+            //    std::cout << SP_StringAsString(PyList_GetItem(keys,i)) << "=\"" << SP_StringAsString(PyObject_Str(PyList_GetItem(values,i))) << "\"" << std::endl;
+                if (SP_StringCheck(value))
+                    desc.setAttribute(SP_StringAsString(key),SP_StringAsString(value));
                 else
-                    desc.setAttribute(PyUnicode_AsUTF8(key),PyUnicode_AsUTF8(PyObject_Str(value)));
+                    desc.setAttribute(SP_StringAsString(key),SP_StringAsString(PyObject_Str(value)));
             }
         }
         Py_DecRef(keys);
@@ -176,7 +176,7 @@ extern "C" PyObject * BaseContext_getObject(PyObject * self, PyObject * args, Py
         {
             PyObject *key = PyList_GetItem(keys,i);
             PyObject *value = PyList_GetItem(values,i);
-            if( !strcmp(PyUnicode_AsUTF8(key),"warning") )
+            if( !strcmp(SP_StringAsString(key),"warning") )
             {
                 if PyBool_Check(value)
                     warning = (value==Py_True);

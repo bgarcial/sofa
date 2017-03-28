@@ -35,12 +35,12 @@ using namespace sofa::defaulttype;
 SP_CLASS_ATTR_GET(Data,name)(PyObject *self, void*)
 {
     BaseData* data=((PyPtr<BaseData>*)self)->object; // TODO: check dynamic cast
-    return PyUnicode_FromString(data->getName().c_str());
+    return SP_StringFromString(data->getName().c_str());
 }
 SP_CLASS_ATTR_SET(Data,name)(PyObject *self, PyObject * args, void*)
 {
     BaseData* data=((PyPtr<BaseData>*)self)->object; // TODO: check dynamic cast
-    char *str = PyUnicode_AsUTF8(args); // for setters, only one object and not a tuple....
+    char *str = SP_StringAsString(args); // for setters, only one object and not a tuple....
     data->setName(str);
     return 0;
 }
@@ -58,7 +58,7 @@ PyObject *GetDataValuePython(BaseData* data)
         if (typeinfo->Text())
         {
             // it's some text
-            return PyUnicode_FromString(typeinfo->getTextValue(valueVoidPtr,0).c_str());
+            return SP_StringFromString(typeinfo->getTextValue(valueVoidPtr,0).c_str());
         }
         if (typeinfo->Scalar())
         {
@@ -68,12 +68,12 @@ PyObject *GetDataValuePython(BaseData* data)
         if (typeinfo->Integer())
         {
             // it's some Integer...
-            return PyLong_FromLong((long)typeinfo->getIntegerValue(valueVoidPtr,0));
+            return SP_IntFromLong((long)typeinfo->getIntegerValue(valueVoidPtr,0));
         }
 
         // this type is not yet supported
         SP_MESSAGE_WARNING( "BaseData_getAttr_value unsupported native type="<<data->getValueTypeString()<<" for data "<<data->getName()<<" ; returning string value" )
-        return PyUnicode_FromString(data->getValueString().c_str());
+        return SP_StringFromString(data->getValueString().c_str());
     }
     else
     {
@@ -85,7 +85,7 @@ PyObject *GetDataValuePython(BaseData* data)
         if( !typeinfo->Text() && !typeinfo->Scalar() && !typeinfo->Integer() )
         {
             SP_MESSAGE_WARNING( "BaseData_getAttr_value unsupported native type="<<data->getValueTypeString()<<" for data "<<data->getName()<<" ; returning string value" )
-            return PyUnicode_FromString(data->getValueString().c_str());
+            return SP_StringFromString(data->getValueString().c_str());
         }
 
         PyObject *rows = PyList_New(nbRows);
@@ -98,7 +98,7 @@ PyObject *GetDataValuePython(BaseData* data)
                 if (typeinfo->Text())
                 {
                     // it's some text
-                    PyList_SetItem(row,j,PyUnicode_FromString(typeinfo->getTextValue(valueVoidPtr,i*rowWidth+j).c_str()));
+                    PyList_SetItem(row,j,SP_StringFromString(typeinfo->getTextValue(valueVoidPtr,i*rowWidth+j).c_str()));
                 }
                 else if (typeinfo->Scalar())
                 {
@@ -108,7 +108,7 @@ PyObject *GetDataValuePython(BaseData* data)
                 else if (typeinfo->Integer())
                 {
                     // it's some Integer...
-                    PyList_SetItem(row,j,PyLong_FromLong((long)typeinfo->getIntegerValue(valueVoidPtr,i*rowWidth+j)));
+                    PyList_SetItem(row,j,SP_IntFromLong((long)typeinfo->getIntegerValue(valueVoidPtr,i*rowWidth+j)));
                 }
                 else
                 {
@@ -124,7 +124,7 @@ PyObject *GetDataValuePython(BaseData* data)
 
     // default (should not happen)...
     SP_MESSAGE_WARNING( "BaseData_getAttr_value unsupported native type="<<data->getValueTypeString()<<" for data "<<data->getName()<<" ; returning string value (should not come here!)" )
-    return PyUnicode_FromString(data->getValueString().c_str());
+    return SP_StringFromString(data->getValueString().c_str());
 }
 
 
@@ -194,7 +194,7 @@ static int SetDataValuePythonList(BaseData* data, PyObject* args,
 
                 PyObject *listElt = PyList_GetItem(row,j);
 
-                if (PyLong_Check(listElt))
+                if (SP_IntCheck(listElt))
                 {
                     // it's an int
                     if (typeinfo->Integer())
@@ -228,7 +228,7 @@ static int SetDataValuePythonList(BaseData* data, PyObject* args,
                     SReal value = PyFloat_AsDouble(listElt);
                     typeinfo->setScalarValue(editVoidPtr,i*rowWidth+j,value);
                 }
-                else if (PyUnicode_Check(listElt))
+                else if (SP_StringCheck(listElt))
                 {
                     // it's a string
                     if (!typeinfo->Text())
@@ -237,7 +237,7 @@ static int SetDataValuePythonList(BaseData* data, PyObject* args,
                         PyErr_BadArgument();
                         return -1;
                     }
-                    char *str = PyUnicode_AsUTF8(listElt); // pour les setters, un seul objet et pas un tuple....
+                    char *str = SP_StringAsString(listElt); // pour les setters, un seul objet et pas un tuple....
                     typeinfo->setTextValue(editVoidPtr,i*rowWidth+j,str);
                 }
                 else
@@ -292,7 +292,7 @@ static int SetDataValuePythonList(BaseData* data, PyObject* args,
 
             PyObject *listElt = PyList_GetItem(args,i);
 
-            if (PyLong_Check(listElt))
+            if (SP_IntCheck(listElt))
             {
                 // it's an int
                 if (typeinfo->Integer())
@@ -326,7 +326,7 @@ static int SetDataValuePythonList(BaseData* data, PyObject* args,
                 SReal value = PyFloat_AsDouble(listElt);
                 typeinfo->setScalarValue(editVoidPtr,i,value);
             }
-            else if (PyUnicode_Check(listElt))
+            else if (SP_StringCheck(listElt))
             {
                 // it's a string
                 if (!typeinfo->Text())
@@ -335,7 +335,7 @@ static int SetDataValuePythonList(BaseData* data, PyObject* args,
                     PyErr_BadArgument();
                     return -1;
                 }
-                char *str = PyUnicode_AsUTF8(listElt); // pour les setters, un seul objet et pas un tuple....
+                char *str = SP_StringAsString(listElt); // pour les setters, un seul objet et pas un tuple....
                 typeinfo->setTextValue(editVoidPtr,i,str);
             }
             else
@@ -363,9 +363,9 @@ int SetDataValuePython(BaseData* data, PyObject* args)
 
 
     // string
-    if (PyUnicode_Check(args))
+    if (SP_StringCheck(args))
     {
-        char *str = PyUnicode_AsUTF8(args); // for setters, only one object and not a tuple....
+        char *str = SP_StringAsString(args); // for setters, only one object and not a tuple....
 
         if( strlen(str)>0u && str[0]=='@' ) // DataLink
         {
@@ -387,7 +387,7 @@ int SetDataValuePython(BaseData* data, PyObject* args)
 
 
     // int
-    if (PyLong_Check(args))
+    if (SP_IntCheck(args))
     {
         if (rowWidth*nbRows<1 || (!typeinfo->Integer() && !typeinfo->Scalar()))
         {
@@ -448,7 +448,6 @@ int SetDataValuePython(BaseData* data, PyObject* args)
 }
 
 
-
 SP_CLASS_ATTR_GET(Data,value)(PyObject *self, void*)
 {
     BaseData* data=((PyPtr<BaseData>*)self)->object; // TODO: check dynamic cast
@@ -482,9 +481,9 @@ extern "C" PyObject * Data_getValue(PyObject *self, PyObject * args)
     if (typeinfo->Scalar())
         return PyFloat_FromDouble(typeinfo->getScalarValue(data->getValueVoidPtr(),index));
     if (typeinfo->Integer())
-        return PyLong_FromLong((long)typeinfo->getIntegerValue(data->getValueVoidPtr(),index));
+        return SP_IntFromLong((long)typeinfo->getIntegerValue(data->getValueVoidPtr(),index));
     if (typeinfo->Text())
-        return PyUnicode_FromString(typeinfo->getTextValue(data->getValueVoidPtr(),index).c_str());
+        return SP_StringFromString(typeinfo->getTextValue(data->getValueVoidPtr(),index).c_str());
 
     // should never happen....
     SP_MESSAGE_ERROR( "Data.getValue unknown data type" )
@@ -513,17 +512,17 @@ extern "C" PyObject * Data_setValue(PyObject *self, PyObject * args)
     if (typeinfo->Scalar() && PyFloat_Check(value))
     {
         typeinfo->setScalarValue((void*)data->getValueVoidPtr(),index,PyFloat_AsDouble(value));
-        return PyLong_FromLong(0);
+        return SP_IntFromLong(0);
     }
-    if (typeinfo->Integer() && PyLong_Check(value))
+    if (typeinfo->Integer() && SP_IntCheck(value))
     {
         typeinfo->setIntegerValue((void*)data->getValueVoidPtr(),index,PyLong_AsLong(value));
-        return PyLong_FromLong(0);
+        return SP_IntFromLong(0);
     }
-    if (typeinfo->Text() && PyUnicode_Check(value))
+    if (typeinfo->Text() && SP_StringCheck(value))
     {
-        typeinfo->setTextValue((void*)data->getValueVoidPtr(),index,PyUnicode_AsUTF8(value));
-        return PyLong_FromLong(0);
+        typeinfo->setTextValue((void*)data->getValueVoidPtr(),index,SP_StringAsString(value));
+        return SP_IntFromLong(0);
     }
 
     // should never happen....
@@ -536,13 +535,13 @@ extern "C" PyObject * Data_setValue(PyObject *self, PyObject * args)
 extern "C" PyObject * Data_getValueTypeString(PyObject *self, PyObject * /*args*/)
 {
     BaseData* data=((PyPtr<BaseData>*)self)->object;
-    return PyUnicode_FromString(data->getValueTypeString().c_str());
+    return SP_StringFromString(data->getValueTypeString().c_str());
 }
 
 extern "C" PyObject * Data_getValueString(PyObject *self, PyObject * /*args*/)
 {
     BaseData* data=((PyPtr<BaseData>*)self)->object;
-    return PyUnicode_FromString(data->getValueString().c_str());
+    return SP_StringFromString(data->getValueString().c_str());
 }
 
 
@@ -557,7 +556,7 @@ extern "C" PyObject * Data_getSize(PyObject *self, PyObject * /*args*/)
 
     SP_MESSAGE_WARNING( "Data_getSize (this function always returns 0) rowWidth="<<rowWidth<<" nbRows="<<nbRows );
 
-    return PyLong_FromLong(0); //temp ==> WTF ?????
+    return SP_IntFromLong(0); //temp ==> WTF ?????
 }
 
 extern "C" PyObject * Data_setSize(PyObject *self, PyObject * args)
@@ -605,9 +604,9 @@ extern "C" PyObject * Data_read(PyObject *self, PyObject * args)
         return NULL;
     }
 
-    if (PyUnicode_Check(value))
+    if (SP_StringCheck(value))
     {
-        data->read(PyUnicode_AsUTF8(value));
+        data->read(SP_StringAsString(value));
     }
     else
     {
@@ -632,9 +631,9 @@ extern "C" PyObject * Data_setParent(PyObject *self, PyObject * args)
 
     typedef PyPtr<BaseData> PyBaseData;
 
-    if (PyUnicode_Check(value))
+    if (SP_StringCheck(value))
     {
-        data->setParent(PyUnicode_AsUTF8(value));
+        data->setParent(SP_StringAsString(value));
         data->setDirtyOutputs(); // forcing children updates (should it be done in BaseData?)
     }
     else if( dynamic_cast<BaseData*>(((PyBaseData*)value)->object) )
@@ -662,14 +661,14 @@ extern "C" PyObject * Data_getLinkPath(PyObject * self, PyObject * /*args*/)
     if( owner )
     {
         if( BaseObject* obj = owner->toBaseObject() )
-            return PyUnicode_FromString(("@"+obj->getPathName()+"."+data->getName()).c_str());
+            return SP_StringFromString(("@"+obj->getPathName()+"."+data->getName()).c_str());
         else if( BaseNode* node = owner->toBaseNode() )
-            return PyUnicode_FromString(("@"+node->getPathName()+"."+data->getName()).c_str());
+            return SP_StringFromString(("@"+node->getPathName()+"."+data->getName()).c_str());
     }
 
     // default: no owner or owner of unknown type
     SP_MESSAGE_WARNING( "Data_getLinkName the Data has no known owner" )
-    return PyUnicode_FromString(data->getName().c_str());
+    return SP_StringFromString(data->getName().c_str());
 }
 
 
@@ -715,7 +714,7 @@ extern "C" PyObject * Data_getValueVoidPtr(PyObject * self, PyObject * /*args*/)
     PyTuple_SetItem( res, 1, shape );
 
     // the most basic type name
-    PyTuple_SetItem( res, 2, PyUnicode_FromString( valuetypeinfo->name().c_str() ) );
+    PyTuple_SetItem( res, 2, SP_StringFromString( valuetypeinfo->name().c_str() ) );
 
 
     return res;

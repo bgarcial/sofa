@@ -27,6 +27,7 @@
 #include "Binding_Data.h"
 #include "Binding_DisplayFlagsData.h"
 #include "Binding_OptionsGroupData.h"
+#include "Binding_DataFileName.h"
 #include "Binding_DataFileNameVector.h"
 #include "Binding_VectorLinearSpringData.h"
 #include "Binding_Link.h"
@@ -37,6 +38,7 @@
 #include "Binding_Context.h"
 #include "Binding_Node.h"
 #include "Binding_Vector.h"
+#include "Binding_TopologyChange.h"
 #include "Binding_BaseLoader.h"
 #include "Binding_MeshLoader.h"
 #include "Binding_Topology.h"
@@ -48,6 +50,9 @@
 #include "Binding_MechanicalObject.h"
 #include "Binding_PythonScriptController.h"
 #include "Binding_LinearSpring.h"
+#include "Binding_BaseTopologyObject.h"
+#include "Binding_TriangleSetTopologyModifier.h"
+#include "Binding_PointSetTopologyModifier.h"
 #include "Binding_BaseMapping.h"
 //#include "Binding_Mapping.h"
 //#include "Binding_RigidMapping.h"
@@ -61,46 +66,39 @@
 
 using sofa::PythonFactory;
 
+#ifdef SOFAPYTHON_PYTHON3
+    PyMODINIT_FUNC PyInit_Sofa(void)
+    {
+        static struct PyModuleDef module = {
+           PyModuleDef_HEAD_INIT,
+           "Sofa",   /* name of module */
+           NULL, /* module documentation, may be NULL */
+           -1,       /* size of per-interpreter state of the module, or -1 if the module keeps state in global variables. */
+           SofaModuleMethods,
+           NULL, /*Currently unused, should be NULL. */ \
+           NULL, /*A traversal function to call during GC traversal of the module object, or NULL if not needed.*/
+           NULL, /*A clear function to call during GC clearing of the module object, or NULL if not needed. */
+           NULL /*A function to call during deallocation of the module object, or NULL if not needed. */
+        };
+        PythonFactory::s_sofaPythonModule = PyModule_Create(&module);
+        return PythonFactory::s_sofaPythonModule;
+    }
 
-PyMODINIT_FUNC PyInit_Sofa(void)
-{
-    static struct PyModuleDef module = {
-       PyModuleDef_HEAD_INIT,
-       "Sofa",   /* name of module */
-       NULL, /* module documentation, may be NULL */
-       -1,       /* size of per-interpreter state of the module, or -1 if the module keeps state in global variables. */
-       SofaModuleMethods,
-       NULL, /*Currently unused, should be NULL. */ \
-       NULL, /*A traversal function to call during GC traversal of the module object, or NULL if not needed.*/
-       NULL, /*A clear function to call during GC clearing of the module object, or NULL if not needed. */
-       NULL /*A function to call during deallocation of the module object, or NULL if not needed. */
-    };
-    PythonFactory::s_sofaPythonModule = PyModule_Create(&module);
-    return PythonFactory::s_sofaPythonModule;
+    void registerSofaPythonModule()
+    {
+        PyImport_AppendInittab("Sofa",PyInit_Sofa); // must be run before Py_Initialize()
 
-
-}
-
-
-void registerSofaPythonModule()
-{
-    PyImport_AppendInittab("Sofa",PyInit_Sofa); // must be run before Py_Initialize()
-
-}
+    }
+#endif
 
 void bindSofaPythonModule()
 {
-    //PyImport_AppendInittab( (char*)"Sofa", &initSofa );
 
-   // PythonFactory::s_sofaPythonModule = PyInit_Sofa();
-
-
-//    printf("PyModule_Create %s\n",PyUnicode_AsUTF8(PyObject_Str(PythonFactory::s_sofaPythonModule)));
-
-//    if (!PythonFactory::s_sofaPythonModule || PythonFactory::s_sofaPythonModule==Py_None)
-//            printf(">>>>>>>>>>>>>>>>>>>>>>>>> bindSofaPythonModule NONE\n");
-
+#ifdef SOFAPYTHON_PYTHON3
     PyImport_ImportModule("Sofa");
+#else
+    PythonFactory::s_sofaPythonModule = SP_INIT_MODULE(Sofa)
+#endif
 
     // non Base-Inherited types
 
@@ -108,7 +106,9 @@ void bindSofaPythonModule()
     // special Data cases
     SP_ADD_CLASS_IN_FACTORY(DisplayFlagsData,sofa::core::objectmodel::Data<sofa::core::visual::DisplayFlags>)
     SP_ADD_CLASS_IN_FACTORY(OptionsGroupData,sofa::core::objectmodel::Data<sofa::helper::OptionsGroup>)
+    SP_ADD_CLASS_IN_FACTORY(DataFileName,sofa::core::objectmodel::DataFileName)
     SP_ADD_CLASS_IN_FACTORY(DataFileNameVector,sofa::core::objectmodel::DataFileNameVector)
+    SP_ADD_CLASS_IN_SOFAMODULE(PointAncestorElem)
     SP_ADD_CLASS_IN_FACTORY(VectorLinearSpringData,sofa::core::objectmodel::Data<sofa::helper::vector<sofa::component::interactionforcefield::LinearSpring<SReal>>>)
 
     SP_ADD_CLASS_IN_SOFAMODULE(Link)
@@ -122,6 +122,7 @@ void bindSofaPythonModule()
     SP_ADD_CLASS_IN_SOFAMODULE(Base)
     SP_ADD_CLASS_IN_SOFAMODULE(BaseContext)
     SP_ADD_CLASS_IN_SOFAMODULE(BaseObject)
+    SP_ADD_CLASS_IN_SOFAMODULE(BaseTopologyObject)
     SP_ADD_CLASS_IN_SOFAMODULE(BaseState)
     SP_ADD_CLASS_IN_SOFAMODULE(BaseMechanicalState)
     SP_ADD_CLASS_IN_SOFAMODULE(BaseMapping)
@@ -150,6 +151,8 @@ void bindSofaPythonModule()
     //SP_ADD_CLASS_IN_FACTORY(Controller)
     //SP_ADD_CLASS_IN_FACTORY(ScriptController)
     SP_ADD_CLASS_IN_FACTORY(PythonScriptController,sofa::component::controller::PythonScriptController)
+    SP_ADD_CLASS_IN_FACTORY(PointSetTopologyModifier,sofa::component::topology::PointSetTopologyModifier)
+    SP_ADD_CLASS_IN_FACTORY(TriangleSetTopologyModifier,sofa::component::topology::TriangleSetTopologyModifier)
 }
 
 

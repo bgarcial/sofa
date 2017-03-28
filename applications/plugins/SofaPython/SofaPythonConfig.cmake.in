@@ -2,7 +2,11 @@
 
 @PACKAGE_INIT@
 
-find_package(PythonLibs 3.0 REQUIRED)
+if(SOFAPYTHON_PYTHON3)
+    find_package(PythonLibs 3.0 REQUIRED)
+else(SOFAPYTHON_PYTHON3)
+    find_package(PythonLibs 2.7 REQUIRED)
+endif(SOFAPYTHON_PYTHON3)
 sofa_create_target(PythonLibs SofaPython "${PYTHON_LIBRARIES}" "${PYTHON_INCLUDE_DIRS}")
 find_package(SofaGui REQUIRED)
 find_package(SofaGeneral REQUIRED)

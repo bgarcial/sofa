@@ -100,8 +100,7 @@ extern "C" PyObject * Base_findLink(PyObject *self, PyObject *args)
 extern "C" PyObject* Base_GetAttr(PyObject *o, PyObject *attr_name)
 {
     Base* obj=down_cast<Base>(((PySPtr<Base>*)o)->object.get());
-    char *attrName = PyUnicode_AsUTF8(attr_name);
-//    printf("Base_GetAttr type=%s name=%s attrName=%s\n",obj->getClassName().c_str(),obj->getName().c_str(),attrName);
+    char *attrName = SP_StringAsString(attr_name);
 
     // see if a Data field has this name...
     if( BaseData * data = obj->findData(attrName) )
@@ -117,7 +116,6 @@ extern "C" PyObject* Base_GetAttr(PyObject *o, PyObject *attr_name)
     if( BaseLink * link = obj->findLink(attrName) )
         return GetLinkValuePython(link); // we have our link... let's create the right Python type....
 
-    //        printf("Base_GetAttr ERROR data not found - type=%s name=%s attrName=%s\n",obj->getClassName().c_str(),obj->getName().c_str(),attrName);
     return PyObject_GenericGetAttr(o,attr_name);
 }
 
@@ -125,9 +123,8 @@ extern "C" int Base_SetAttr(PyObject *o, PyObject *attr_name, PyObject *v)
 {
     // attribute does not exist: see if a Data field has this name...
     Base* obj=down_cast<Base>(((PySPtr<Base>*)o)->object.get());
-    char *attrName = PyUnicode_AsUTF8(attr_name);
+    char *attrName = SP_StringAsString(attr_name);
 
-//    printf("Base_SetAttr name=%s\n",attrName);
     if (BaseData * data = obj->findData(attrName))
     {
         // data types in Factory can have a specific setter
@@ -148,7 +145,7 @@ extern "C" PyObject * Base_getClassName(PyObject * self, PyObject * /*args*/)
     // BaseNode is not bound in SofaPython, so getPathName is bound in Node instead
     Base* node = ((PySPtr<Base>*)self)->object.get();
 
-    return PyUnicode_FromString(node->getClassName().c_str());
+    return SP_StringFromString(node->getClassName().c_str());
 }
 
 extern "C" PyObject * Base_getTemplateName(PyObject * self, PyObject * /*args*/)
@@ -156,7 +153,7 @@ extern "C" PyObject * Base_getTemplateName(PyObject * self, PyObject * /*args*/)
     // BaseNode is not bound in SofaPython, so getPathName is bound in Node instead
     Base* node = ((PySPtr<Base>*)self)->object.get();
 
-    return PyUnicode_FromString(node->getTemplateName().c_str());
+    return SP_StringFromString(node->getTemplateName().c_str());
 }
 
 extern "C" PyObject * Base_getName(PyObject * self, PyObject * /*args*/)
@@ -164,7 +161,7 @@ extern "C" PyObject * Base_getName(PyObject * self, PyObject * /*args*/)
     // BaseNode is not bound in SofaPython, so getPathName is bound in Node instead
     Base* node = ((PySPtr<Base>*)self)->object.get();
 
-    return PyUnicode_FromString(node->getName().c_str());
+    return SP_StringFromString(node->getName().c_str());
 }
 
 extern "C" PyObject * Base_getDataFields(PyObject *self, PyObject * /*args*/)
@@ -181,7 +178,7 @@ extern "C" PyObject * Base_getDataFields(PyObject *self, PyObject * /*args*/)
 
     PyObject * pyDict = PyDict_New();
     for (size_t i=0; i<dataFields.size(); i++)
-        PyDict_SetItem(pyDict, PyUnicode_FromString(dataFields[i]->getName().c_str()), GetDataValuePython(dataFields[i]));
+        PyDict_SetItem(pyDict, SP_StringFromString(dataFields[i]->getName().c_str()), GetDataValuePython(dataFields[i]));
 
     return pyDict;
 }
