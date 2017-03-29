@@ -42,7 +42,8 @@ namespace _distancegrid_
 
 struct DistanceGrid_test : public Sofa_test<SReal>
 {
-    void chekcValidConstructorsCube(){
+    void chekcValidConstructorsCube()
+    {
         MessageAsTestFailure error(Message::Error);
         MessageAsTestFailure warning(Message::Warning);
 
@@ -65,7 +66,8 @@ struct DistanceGrid_test : public Sofa_test<SReal>
         EXPECT_EQ(grid.getCubeDim(), 10);
     }
 
-    void checkValidLoader(const std::string& name){
+    void checkValidLoader(const std::string& name)
+    {
         MessageAsTestFailure warning(Message::Warning);
         MessageAsTestFailure error(Message::Error);
 
@@ -76,7 +78,8 @@ struct DistanceGrid_test : public Sofa_test<SReal>
         EXPECT_EQ(grid.getNz(), 64) ;
     }
 
-    void checkLoadFromFile(){
+    void checkLoadFromFile()
+    {
         MessageAsTestFailure warning(Message::Warning);
         ExpectMessage error(Message::Error) ;
 
@@ -84,16 +87,17 @@ struct DistanceGrid_test : public Sofa_test<SReal>
     }
 };
 
-TEST_F(DistanceGrid_test, checkValidLoader) {
+TEST_F(DistanceGrid_test, checkValidLoader)
+{
     ASSERT_NO_THROW(this->checkValidLoader("#cube")) ;
     ASSERT_NO_THROW(this->checkValidLoader("cube.vtk")) ;
     ASSERT_NO_THROW(this->checkValidLoader("cube.fmesh")) ;
     ASSERT_NO_THROW(this->checkValidLoader("cube.obj")) ;
     ASSERT_NO_THROW(this->checkValidLoader("cube.vtk")) ;
-
 }
 
-TEST_F(DistanceGrid_test, chekcInvalidConstructorsCube) {
+TEST_F(DistanceGrid_test, checkInvalidConstructorsCube)
+{
     helper::vector< helper::vector< float >> values = {
         {-10, 10, 10,  -1,-1,-1,  1, 1,1},
         { 10,-10, 10,  -1,-1,-1,  1, 1,1},
@@ -103,22 +107,13 @@ TEST_F(DistanceGrid_test, chekcInvalidConstructorsCube) {
         {  0, 10,  0,  -1,-1,-1,  1, 1,1},
         {  0, 10,  0,  -1, 1,-1,  1,-1,1} };
     for(auto& v : values ){
-        ASSERT_NO_THROW(this->chekcInvalidConstructorsCube(v[0],v[1],v[2], v[3], v[4], v[5], v[6], v[7], v[8])) ;
+        ASSERT_NO_THROW(this->checkInvalidConstructorsCube(v[0],v[1],v[2], v[3], v[4], v[5], v[6], v[7], v[8])) ;
     }
 }
 
-TEST_F(DistanceGrid_test, chekLoadFromName) {
-    helper::vector< helper::vector< float >> values = {
-        {-10, 10, 10,  -1,-1,-1,  1, 1,1},
-        { 10,-10, 10,  -1,-1,-1,  1, 1,1},
-        { 10, 10,-10,  -1,-1,-1,  1, 1,1},
-        { 10, 10,  0,  -1,-1,-1,  1, 1,1},
-        { 10,  0, 10,  -1,-1,-1,  1, 1,1},
-        {  0, 10,  0,  -1,-1,-1,  1, 1,1},
-        {  0, 10,  0,  -1, 1,-1,  1,-1,1} };
-    for(auto& v : values ){
-        ASSERT_NO_THROW(this->chekcInvalidConstructorsCube(v[0],v[1],v[2], v[3], v[4], v[5], v[6], v[7], v[8])) ;
-    }
+TEST_F(DistanceGrid_test, checkLoadFromName)
+{
+
 }
 
 
