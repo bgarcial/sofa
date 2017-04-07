@@ -23,10 +23,15 @@
 #include <SofaVolumetricData/DistanceGridCollisionModel.h>
 #include <sofa/core/visual/VisualParams.h>
 #include <sofa/core/ObjectFactory.h>
+using sofa::core::RegisterObject ;
+
 #include <SofaBaseCollision/CubeModel.h>
 #include <fstream>
 #include <sofa/helper/system/gl.h>
+
 #include <sofa/helper/gl/template.h>
+using sofa::helper::gl::glVertexT;
+
 #include <sofa/core/topology/BaseMeshTopology.h>
 #include <SofaMeshCollision/BarycentricContactMapper.inl>
 #include <SofaMeshCollision/RigidContactMapper.inl>
@@ -44,29 +49,29 @@ namespace component
 namespace collision
 {
 
+namespace _distancegridcollisionmodel_
+{
+
 SOFA_DECL_CLASS(DistanceGridCollisionModel)
 
-int RigidDistanceGridCollisionModelClass = core::RegisterObject("Grid-based distance field")
+int RigidDistanceGridCollisionModelClass = RegisterObject("Grid-based distance field")
         .add< RigidDistanceGridCollisionModel >()
         .addAlias("DistanceGridCollisionModel")
         .addAlias("RigidDistanceGrid")
         .addAlias("DistanceGrid")
         ;
 
-int FFDDistanceGridCollisionModelClass = core::RegisterObject("Grid-based deformable distance field")
+int FFDDistanceGridCollisionModelClass = RegisterObject("Grid-based deformable distance field")
         .add< FFDDistanceGridCollisionModel >()
         .addAlias("FFDDistanceGrid")
         ;
-
-using namespace defaulttype;
 
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 RigidDistanceGridCollisionModel::RigidDistanceGridCollisionModel()
-    : modified(true)
-    , fileRigidDistanceGrid( initData( &fileRigidDistanceGrid, "fileRigidDistanceGrid", "load distance grid from specified file"))
+    : fileRigidDistanceGrid( initData( &fileRigidDistanceGrid, "fileRigidDistanceGrid", "load distance grid from specified file"))
     , scale( initData( &scale, 1.0, "scale", "scaling factor for input file"))
     , translation( initData( &translation, "translation", "translation to apply to input file"))
     , rotation( initData( &rotation, "rotation", "rotation to apply to input file"))
@@ -82,8 +87,9 @@ RigidDistanceGridCollisionModel::RigidDistanceGridCollisionModel()
     , showGridPoints( initData( &showGridPoints, false, "showGridPoints", "Enable rendering of grid points"))
     , showMinDist ( initData( &showMinDist, 0.0, "showMinDist", "Min distance to render gradients"))
     , showMaxDist ( initData( &showMaxDist, 0.0, "showMaxDist", "Max distance to render gradients"))
+    ,  modified(true)
 {
-    rigid = NULL;
+    rigid = nullptr;
     addAlias(&fileRigidDistanceGrid,"filename");
 }
 
@@ -91,22 +97,21 @@ RigidDistanceGridCollisionModel::~RigidDistanceGridCollisionModel()
 {
     for (unsigned int i=0; i<elems.size(); i++)
     {
-        if (elems[i].grid!=NULL) elems[i].grid->release();
-        if (elems[i].prevGrid!=NULL) elems[i].prevGrid->release();
+        if (elems[i].grid!=nullptr) elems[i].grid->release();
+        if (elems[i].prevGrid!=nullptr) elems[i].prevGrid->release();
     }
 }
 
 void RigidDistanceGridCollisionModel::init()
 {
     this->core::CollisionModel::init();
-    rigid = dynamic_cast< core::behavior::MechanicalState<RigidTypes>* > (getContext()->getMechanicalState());
+    rigid = dynamic_cast< MechanicalState<RigidTypes>* > (getContext()->getMechanicalState());
 
-    DistanceGrid* grid = NULL;
+    DistanceGrid* grid = nullptr;
     if (fileRigidDistanceGrid.getValue().empty())
     {
-        if (elems.size()==0 || elems[0].grid==NULL)
+        if (elems.size()==0 || elems[0].grid==nullptr)
             serr << "ERROR: RigidDistanceGridCollisionModel requires an input filename." << sendl;
-        // else the grid has already been set
         return;
     }
     sout << "RigidDistanceGridCollisionModel: creating "<<nx.getValue()<<"x"<<ny.getValue()<<"x"<<nz.getValue()<<" DistanceGrid from file "<<fileRigidDistanceGrid.getValue();
@@ -141,15 +146,16 @@ void RigidDistanceGridCollisionModel::resize(int s)
 void RigidDistanceGridCollisionModel::setGrid(DistanceGrid* surf, int index)
 {
     if (elems[index].grid == surf) return;
-    if (elems[index].grid!=NULL) elems[index].grid->release();
+    if (elems[index].grid!=nullptr) elems[index].grid->release();
     elems[index].grid = surf->addRef();
     modified = true;
 }
 
-void RigidDistanceGridCollisionModel::setNewState(int index, double dt, DistanceGrid* grid, const Matrix3& rotation, const Vector3& translation)
+void RigidDistanceGridCollisionModel::setNewState(int index, double dt, DistanceGrid* grid,
+                                                  const Matrix3& rotation, const Vector3& translation)
 {
     grid->addRef();
-    if (elems[index].prevGrid!=NULL)
+    if (elems[index].prevGrid!=nullptr)
         elems[index].prevGrid->release();
     elems[index].prevGrid = elems[index].grid;
     elems[index].grid = grid;
@@ -177,7 +183,6 @@ void RigidDistanceGridCollisionModel::updateState()
 
     for (int i=0; i<size; i++)
     {
-        //static_cast<DistanceGridCollisionElement*>(elems[i])->recalcBBox();
         Vector3 emin, emax;
         if (rigid)
         {
@@ -220,11 +225,9 @@ void RigidDistanceGridCollisionModel::computeBoundingTree(int maxDepth)
     cubeModel->resize(size);
     for (int i=0; i<size; i++)
     {
-        //static_cast<DistanceGridCollisionElement*>(elems[i])->recalcBBox();
         Vector3 emin, emax;
         if (elems[i].isTransformed)
         {
-            //std::cout << "Grid "<<i<<" transformation: <"<<elems[i].rotation<<"> x + <"<<elems[i].translation<<">"<<std::endl;
             for (int j=0; j<8; j++)
             {
                 Vector3 corner = elems[i].translation + elems[i].rotation * (flipped ? elems[i].grid->getCorner(j) : elems[i].grid->getBBCorner(j));
@@ -247,7 +250,6 @@ void RigidDistanceGridCollisionModel::computeBoundingTree(int maxDepth)
             emax = flipped ? elems[i].grid->getPMax() : elems[i].grid->getBBMax();
         }
         cubeModel->setParentOf(i, emin, emax); // define the bounding box of the current element
-        //std::cout << "Grid "<<i<<" within  <"<<emin<<">-<"<<emax<<">"<<std::endl;
     }
     cubeModel->computeBoundingTree(maxDepth);
     modified = false;
@@ -276,7 +278,7 @@ void RigidDistanceGridCollisionModel::draw(const core::visual::VisualParams* vpa
         if (vparams->displayFlags().getShowWireFrame())
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
-    if (getPrevious()!=NULL)
+    if (getPrevious()!=nullptr)
         getPrevious()->draw(vparams);
 #endif /* SOFA_NO_OPENGL */
 }
@@ -289,9 +291,6 @@ void RigidDistanceGridCollisionModel::draw(const core::visual::VisualParams* ,in
     if (elems[index].isTransformed)
     {
         glPushMatrix();
-        // float m[16];
-        // (*rigid->read(sofa::core::ConstVecCoordId::position())->getValue())[index].writeOpenGlMatrix( m );
-        // glMultMatrixf(m);
         Matrix4 m;
         m.identity();
         m = elems[index].rotation;
@@ -305,34 +304,31 @@ void RigidDistanceGridCollisionModel::draw(const core::visual::VisualParams* ,in
     DistanceGrid::Coord corners[8];
     for(unsigned int i=0; i<8; i++)
         corners[i] = grid->getCorner(i);
-    //glEnable(GL_BLEND);
-    //glDepthMask(0);
+
     if (!isSimulated())
         glColor4f(0.25f, 0.25f, 0.25f, 0.1f);
     else
         glColor4f(0.5f, 0.5f, 0.5f, 0.1f);
     glBegin(GL_LINES);
     {
-        helper::gl::glVertexT(corners[0]); helper::gl::glVertexT(corners[4]);
-        helper::gl::glVertexT(corners[1]); helper::gl::glVertexT(corners[5]);
-        helper::gl::glVertexT(corners[2]); helper::gl::glVertexT(corners[6]);
-        helper::gl::glVertexT(corners[3]); helper::gl::glVertexT(corners[7]);
-        helper::gl::glVertexT(corners[0]); helper::gl::glVertexT(corners[2]);
-        helper::gl::glVertexT(corners[1]); helper::gl::glVertexT(corners[3]);
-        helper::gl::glVertexT(corners[4]); helper::gl::glVertexT(corners[6]);
-        helper::gl::glVertexT(corners[5]); helper::gl::glVertexT(corners[7]);
-        helper::gl::glVertexT(corners[0]); helper::gl::glVertexT(corners[1]);
-        helper::gl::glVertexT(corners[2]); helper::gl::glVertexT(corners[3]);
-        helper::gl::glVertexT(corners[4]); helper::gl::glVertexT(corners[5]);
-        helper::gl::glVertexT(corners[6]); helper::gl::glVertexT(corners[7]);
+        glVertexT(corners[0]); glVertexT(corners[4]);
+        glVertexT(corners[1]); glVertexT(corners[5]);
+        glVertexT(corners[2]); glVertexT(corners[6]);
+        glVertexT(corners[3]); glVertexT(corners[7]);
+        glVertexT(corners[0]); glVertexT(corners[2]);
+        glVertexT(corners[1]); glVertexT(corners[3]);
+        glVertexT(corners[4]); glVertexT(corners[6]);
+        glVertexT(corners[5]); glVertexT(corners[7]);
+        glVertexT(corners[0]); glVertexT(corners[1]);
+        glVertexT(corners[2]); glVertexT(corners[3]);
+        glVertexT(corners[4]); glVertexT(corners[5]);
+        glVertexT(corners[6]); glVertexT(corners[7]);
     }
     glEnd();
     glDisable(GL_BLEND);
     glDepthMask(1);
     for(unsigned int i=0; i<8; i++)
         corners[i] = grid->getBBCorner(i);
-    //glEnable(GL_BLEND);
-    //glDepthMask(0);
 
     if (!isSimulated())
         glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
@@ -340,18 +336,18 @@ void RigidDistanceGridCollisionModel::draw(const core::visual::VisualParams* ,in
         glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
     glBegin(GL_LINES);
     {
-        helper::gl::glVertexT(corners[0]); helper::gl::glVertexT(corners[4]);
-        helper::gl::glVertexT(corners[1]); helper::gl::glVertexT(corners[5]);
-        helper::gl::glVertexT(corners[2]); helper::gl::glVertexT(corners[6]);
-        helper::gl::glVertexT(corners[3]); helper::gl::glVertexT(corners[7]);
-        helper::gl::glVertexT(corners[0]); helper::gl::glVertexT(corners[2]);
-        helper::gl::glVertexT(corners[1]); helper::gl::glVertexT(corners[3]);
-        helper::gl::glVertexT(corners[4]); helper::gl::glVertexT(corners[6]);
-        helper::gl::glVertexT(corners[5]); helper::gl::glVertexT(corners[7]);
-        helper::gl::glVertexT(corners[0]); helper::gl::glVertexT(corners[1]);
-        helper::gl::glVertexT(corners[2]); helper::gl::glVertexT(corners[3]);
-        helper::gl::glVertexT(corners[4]); helper::gl::glVertexT(corners[5]);
-        helper::gl::glVertexT(corners[6]); helper::gl::glVertexT(corners[7]);
+        glVertexT(corners[0]); glVertexT(corners[4]);
+        glVertexT(corners[1]); glVertexT(corners[5]);
+        glVertexT(corners[2]); glVertexT(corners[6]);
+        glVertexT(corners[3]); glVertexT(corners[7]);
+        glVertexT(corners[0]); glVertexT(corners[2]);
+        glVertexT(corners[1]); glVertexT(corners[3]);
+        glVertexT(corners[4]); glVertexT(corners[6]);
+        glVertexT(corners[5]); glVertexT(corners[7]);
+        glVertexT(corners[0]); glVertexT(corners[1]);
+        glVertexT(corners[2]); glVertexT(corners[3]);
+        glVertexT(corners[4]); glVertexT(corners[5]);
+        glVertexT(corners[6]); glVertexT(corners[7]);
     }
     glEnd();
 
@@ -386,7 +382,7 @@ void RigidDistanceGridCollisionModel::draw(const core::visual::VisualParams* ,in
                             glColor3d(1+d*0.25, 0, 1+d);
                         else
                             continue; //glColor3d(0, 1-d*0.25, 1-d);
-                        helper::gl::glVertexT(p);
+                        glVertexT(p);
                     }
                 }
             }
@@ -400,7 +396,7 @@ void RigidDistanceGridCollisionModel::draw(const core::visual::VisualParams* ,in
         for (unsigned int i=0; i<grid->meshPts.size(); i++)
         {
             DistanceGrid::Coord p = grid->meshPts[i];
-            helper::gl::glVertexT(p);
+            glVertexT(p);
         }
         glEnd();
         glBegin(GL_LINES);
@@ -416,15 +412,14 @@ void RigidDistanceGridCollisionModel::draw(const core::visual::VisualParams* ,in
                 DistanceGrid::Coord p2 = p + grad * (j*maxdist/2);
                 SReal d = grid->eval(p2);
                 if (flipped) d = -d;
-                //if (rabs(d) > maxdist) continue;
                 d /= maxdist;
                 if (d<0)
                     glColor3d(1+d*0.25, 0, 1+d);
                 else
                     glColor3d(0, 1-d*0.25, 1-d);
-                helper::gl::glVertexT(p2);
+                glVertexT(p2);
                 if (j>-2 && j < 2)
-                    helper::gl::glVertexT(p2);
+                    glVertexT(p2);
             }
         }
         glEnd();
@@ -441,37 +436,35 @@ void RigidDistanceGridCollisionModel::draw(const core::visual::VisualParams* ,in
 ////////////////////////////////////////////////////////////////////////////////
 
 FFDDistanceGridCollisionModel::FFDDistanceGridCollisionModel()
-    : fileFFDDistanceGrid( initData( &fileFFDDistanceGrid, "fileFFDDistanceGrid", "load distance grid from specified file"))
+    : usePoints( initData( &usePoints, true, "usePoints", "use mesh vertices for collision detection"))
+    , singleContact( initData( &singleContact, false, "singleContact", "keep only the deepest contact in each cell"))
     , scale( initData( &scale, 1.0, "scale", "scaling factor for input file"))
-    , sampling( initData( &sampling, 0.0, "sampling", "if not zero: sample the surface with points approximately separated by the given sampling distance (expressed in voxels if the value is negative)"))
+    , sampling( initData( &sampling, 0.0, "sampling", "if not zero: sample the surface with points approximately separated by "
+                                                      "the given sampling distance (expressed in voxels if the value is negative)"))
     , box( initData( &box, "box", "Field bounding box defined by xmin,ymin,zmin, xmax,ymax,zmax") )
     , nx( initData( &nx, 64, "nx", "number of values on X axis") )
     , ny( initData( &ny, 64, "ny", "number of values on Y axis") )
     , nz( initData( &nz, 64, "nz", "number of values on Z axis") )
     , dumpfilename( initData( &dumpfilename, "dumpfilename","write distance grid to specified file"))
-    , usePoints( initData( &usePoints, true, "usePoints", "use mesh vertices for collision detection"))
-    , singleContact( initData( &singleContact, false, "singleContact", "keep only the deepest contact in each cell"))
+    , fileFFDDistanceGrid( initData( &fileFFDDistanceGrid, "fileFFDDistanceGrid", "load distance grid from specified file"))
 {
-    ffd = NULL;
-    ffdMesh = NULL;
-    ffdRGrid = NULL;
-    ffdSGrid = NULL;
+    ffd = nullptr;
+    ffdMesh = nullptr;
+    ffdRGrid = nullptr;
+    ffdSGrid = nullptr;
     addAlias(&fileFFDDistanceGrid,"filename");
     enum_type = FFDDISTANCE_GRIDE_TYPE;
 }
 
 FFDDistanceGridCollisionModel::~FFDDistanceGridCollisionModel()
 {
-    //for (unsigned int i=0; i<elems.size(); i++)
-    //    if (elems[i].grid!=NULL) elems[i].grid->release();
-    if (elems.size()>0 && elems[0].grid!=NULL) elems[0].grid->release();
+    if (elems.size()>0 && elems[0].grid!=nullptr) elems[0].grid->release();
 }
 
 void FFDDistanceGridCollisionModel::init()
 {
-    //std::cout << "> FFDDistanceGridCollisionModel::init()"<<std::endl;
     this->core::CollisionModel::init();
-    ffd = dynamic_cast< core::behavior::MechanicalState<Vec3Types>* > (getContext()->getMechanicalState());
+    ffd = dynamic_cast< MechanicalState<Vec3Types>* > (getContext()->getMechanicalState());
     ffdMesh = /*dynamic_cast< topology::RegularGridTopology* >*/ (getContext()->getMeshTopology());
     ffdRGrid = dynamic_cast< topology::RegularGridTopology* > (ffdMesh);
     ffdSGrid = dynamic_cast< topology::SparseGridTopology* > (ffdMesh);
@@ -481,7 +474,7 @@ void FFDDistanceGridCollisionModel::init()
         return;
     }
 
-    DistanceGrid* grid = NULL;
+    DistanceGrid* grid = nullptr;
     if (fileFFDDistanceGrid.getValue().empty())
     {
         serr<<"ERROR: FFDDistanceGridCollisionModel requires an input filename" << sendl;
@@ -605,10 +598,7 @@ bool FFDDistanceGridCollisionModel::canCollideWithElement(int index, CollisionMo
 {
     if (model2 != this) return true;
     if (!this->bSelfCollision.getValue()) return true;
-    //if (this->getContext() != model2->getContext()) return true;
-    //if (model2 == this)
     {
-        //sout << "ffd self test "<<index<<" - "<<index2<<sendl;
         if (index >= index2) return false;
         if (elems[index].neighbors.count(index2)) return false;
         return true;
@@ -632,7 +622,6 @@ void FFDDistanceGridCollisionModel::computeBoundingTree(int maxDepth)
     cubeModel->resize(size);
     for (int i=0; i<size; i++)
     {
-        //static_cast<DistanceGridCollisionElement*>(elems[i])->recalcBBox();
         Vector3 emin, emax;
         const DeformedCube& cube = getDeformCube(i);
         {
@@ -745,7 +734,9 @@ FFDDistanceGridCollisionModel::DeformedCube::Plane FFDDistanceGridCollisionModel
 void FFDDistanceGridCollisionModel::draw(const core::visual::VisualParams* vparams)
 {
 #ifndef SOFA_NO_OPENGL
-    if (!isActive()) return;
+    if (!isActive())
+        return;
+
     if (vparams->displayFlags().getShowCollisionModels())
     {
         if (vparams->displayFlags().getShowWireFrame())
@@ -759,18 +750,15 @@ void FFDDistanceGridCollisionModel::draw(const core::visual::VisualParams* vpara
         if (vparams->displayFlags().getShowWireFrame())
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
-    if (getPrevious()!=NULL)
+    if (getPrevious()!=nullptr)
         getPrevious()->draw(vparams);
 #endif /* SOFA_NO_OPENGL */
 }
 
-void FFDDistanceGridCollisionModel::draw(const core::visual::VisualParams* vparams,int index)
+void FFDDistanceGridCollisionModel::draw(const VisualParams* vparams,int index)
 {
 #ifndef SOFA_NO_OPENGL
-    //DistanceGrid* grid = getGrid(index);
     DeformedCube& cube = getDeformCube( index );
-    //glEnable(GL_BLEND);
-    //glDepthMask(0);
     float cscale;
     if (!isSimulated())
         cscale = 0.5f;
@@ -786,42 +774,26 @@ void FFDDistanceGridCollisionModel::draw(const core::visual::VisualParams* vpara
         glColor4f(0.0f*cscale, 1.0f*cscale, 0.5f*cscale, 1.0f);
     glBegin(GL_LINES);
     {
-        helper::gl::glVertexT(cube.corners[0]); helper::gl::glVertexT(cube.corners[4]);
-        helper::gl::glVertexT(cube.corners[1]); helper::gl::glVertexT(cube.corners[5]);
-        helper::gl::glVertexT(cube.corners[2]); helper::gl::glVertexT(cube.corners[6]);
-        helper::gl::glVertexT(cube.corners[3]); helper::gl::glVertexT(cube.corners[7]);
-        helper::gl::glVertexT(cube.corners[0]); helper::gl::glVertexT(cube.corners[2]);
-        helper::gl::glVertexT(cube.corners[1]); helper::gl::glVertexT(cube.corners[3]);
-        helper::gl::glVertexT(cube.corners[4]); helper::gl::glVertexT(cube.corners[6]);
-        helper::gl::glVertexT(cube.corners[5]); helper::gl::glVertexT(cube.corners[7]);
-        helper::gl::glVertexT(cube.corners[0]); helper::gl::glVertexT(cube.corners[1]);
-        helper::gl::glVertexT(cube.corners[2]); helper::gl::glVertexT(cube.corners[3]);
-        helper::gl::glVertexT(cube.corners[4]); helper::gl::glVertexT(cube.corners[5]);
-        helper::gl::glVertexT(cube.corners[6]); helper::gl::glVertexT(cube.corners[7]);
+        glVertexT(cube.corners[0]); glVertexT(cube.corners[4]);
+        glVertexT(cube.corners[1]); glVertexT(cube.corners[5]);
+        glVertexT(cube.corners[2]); glVertexT(cube.corners[6]);
+        glVertexT(cube.corners[3]); glVertexT(cube.corners[7]);
+        glVertexT(cube.corners[0]); glVertexT(cube.corners[2]);
+        glVertexT(cube.corners[1]); glVertexT(cube.corners[3]);
+        glVertexT(cube.corners[4]); glVertexT(cube.corners[6]);
+        glVertexT(cube.corners[5]); glVertexT(cube.corners[7]);
+        glVertexT(cube.corners[0]); glVertexT(cube.corners[1]);
+        glVertexT(cube.corners[2]); glVertexT(cube.corners[3]);
+        glVertexT(cube.corners[4]); glVertexT(cube.corners[5]);
+        glVertexT(cube.corners[6]); glVertexT(cube.corners[7]);
     }
     glEnd();
     glLineWidth(2);
     glPointSize(5);
     {
-        /*
-            for (int j=0; j<3; j++)
-            {
-                glBegin(GL_LINE_STRIP);
-                for (int r=0;r<=16;r++)
-                {
-                    SReal c = cube.radius*(SReal)cos(r*M_PI/8);
-                    SReal s = cube.radius*(SReal)sin(r*M_PI/8);
-                    sofa::defaulttype::Vec<3, SReal> p = cube.center;
-                    p[j] += c;
-                    p[(j+1)%3] += s;
-                    helper::gl::glVertexT(p);
-                }
-                glEnd();
-            }
-        */
         glBegin(GL_POINTS);
         {
-            helper::gl::glVertexT(cube.center);
+            glVertexT(cube.center);
 
         }
         glEnd();
@@ -833,15 +805,15 @@ void FFDDistanceGridCollisionModel::draw(const core::visual::VisualParams* vpara
         glColor4f(1.0f, 0.5f, 0.5f, 1.0f);
         glBegin(GL_POINTS);
         for (unsigned int j=0; j<cube.deformedPoints.size(); j++)
-            helper::gl::glVertexT(cube.deformedPoints[j]);
+            glVertexT(cube.deformedPoints[j]);
         glEnd();
         if (vparams->displayFlags().getShowNormals())
         {
             glBegin(GL_LINES);
             for (unsigned int j=0; j<cube.deformedNormals.size(); j++)
             {
-                helper::gl::glVertexT(cube.deformedPoints[j]);
-                helper::gl::glVertexT(cube.deformedPoints[j] + cube.deformedNormals[j]);
+                glVertexT(cube.deformedPoints[j]);
+                glVertexT(cube.deformedPoints[j] + cube.deformedNormals[j]);
             }
             glEnd();
         }
@@ -850,27 +822,9 @@ void FFDDistanceGridCollisionModel::draw(const core::visual::VisualParams* vpara
 #endif /* SOFA_NO_OPENGL */
 }
 
-//template <class DataTypes>
-//typename ContactMapper<RigidDistanceGridCollisionModel,DataTypes>::MMechanicalState* ContactMapper<RigidDistanceGridCollisionModel,DataTypes>::createMapping(const char* name)
-//{
-//	using sofa::component::mapping::IdentityMapping;
-//
-//    MMechanicalState* outmodel = Inherit::createMapping(name);
-//    if (this->child!=NULL && this->mapping==NULL)
-//    {
-//        // add velocity visualization
-///*        sofa::component::visualmodel::DrawV* visu = new sofa::component::visualmodel::DrawV;
-//        this->child->addObject(visu);
-//        visu->useAlpha.setValue(true);
-//        visu->vscale.setValue(this->model->getContext()->getDt());
-//        IdentityMapping< DataTypes, ExtVectorTypes< Vec<3,GLfloat>, Vec<3,GLfloat> > > * map = new IdentityMapping< DataTypes, ExtVectorTypes< Vec<3,GLfloat>, Vec<3,GLfloat> > >( outmodel, visu );
-//        this->child->addObject(map);
-//        visu->init();
-//        map->init(); */
-//    }
-//    return outmodel;
-//}
+} // namespace _distancegridcollisionmodel_
 
+using _distancegridcollisionmodel_::FFDDistanceGridCollisionElement ;
 
 ContactMapperCreator< ContactMapper<FFDDistanceGridCollisionModel> > FFDDistanceGridContactMapperClass("default", true);
 
@@ -878,8 +832,8 @@ template class SOFA_VOLUMETRIC_DATA_API ContactMapper<FFDDistanceGridCollisionMo
 
 
 ContactMapperCreator< ContactMapper<RigidDistanceGridCollisionModel> > DistanceGridContactMapperClass("default", true);
-
 template class SOFA_VOLUMETRIC_DATA_API ContactMapper<RigidDistanceGridCollisionModel, sofa::defaulttype::Vec3Types>;
+
 
 } // namespace collision
 

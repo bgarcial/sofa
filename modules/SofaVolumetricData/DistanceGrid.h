@@ -26,7 +26,7 @@
 #include <sofa/defaulttype/Vec3Types.h>
 
 
-///// Forward declaration
+////// Forward declaration
 namespace sofa
 {
     namespace helper
@@ -66,14 +66,13 @@ public:
     typedef ExtVector<SReal> VecSReal;
     typedef ExtVector<Coord> VecCoord;
 
+public:
     DistanceGrid(int nx, int ny, int nz, Coord pmin, Coord pmax);
     DistanceGrid(int nx, int ny, int nz, Coord pmin, Coord pmax,
                  ExtVectorAllocator<SReal>* alloc);
 
-protected:
     ~DistanceGrid();
 
-public:
     /// Load a distance grid
     static DistanceGrid* load(const std::string& filename,
                               double scale=1.0, double sampling=0.0,
@@ -130,7 +129,9 @@ public:
     inline bool inBBox(const Coord& p, SReal margin=0.0f) const
     {
         for (int c=0; c<3; ++c)
-            if (p[c] < bbmin[c]-margin || p[c] > bbmax[c]+margin) return false;
+            if (p[c] < bbmin[c]-margin || p[c] > bbmax[c]+margin)
+                return false;
+
         return true;
     }
 
@@ -154,8 +155,10 @@ public:
     Coord clamp(Coord p) const
     {
         for (int c=0; c<3; ++c)
+        {
             if (p[c] < pmin[c]) p[c] = pmin[c];
             else if (p[c] > pmax[c]) p[c] = pmax[c];
+        }
         return p;
     }
 
@@ -228,42 +231,44 @@ public:
         return (typename T::value_type) eval(cx);
     }
 
-    VecCoord meshPts;
+    VecCoord        meshPts;
 
 protected:
-    int nbRef;
-    VecSReal dists;
-    const int nx,ny,nz, nxny, nxnynz;
-    const Coord pmin, pmax;
-    const Coord cellWidth, invCellWidth;
-    Coord bbmin, bbmax; ///< bounding box of the object, smaller than the grid
+    int             nbRef;
+    VecSReal        dists;
+    const int       nx,ny,nz, nxny, nxnynz;
+    const Coord     pmin, pmax;
+    const Coord     cellWidth, invCellWidth;
+    Coord           bbmin, bbmax; ///< bounding box of the object, smaller than the grid
 
-    SReal cubeDim; ///< Cube dimension (!=0 if this is actually a cube
-
-    /// Fast Marching Method Update
-    enum Status { FMM_FRONT0 = 0, FMM_FAR = -1, FMM_KNOWN_OUT = -2, FMM_KNOWN_IN = -3 };
-    helper::vector<int> fmm_status;
-    helper::vector<int> fmm_heap;
-    int fmm_heap_size;
-
-    int fmm_pop();
-    void fmm_push(int index);
-    void fmm_swap(int entry1, int entry2);
+    SReal           cubeDim; ///< Cube dimension (!=0 if this is actually a cube
 
     /// Grid shared resources
     struct DistanceGridParams
     {
         std::string filename;
-        double scale;
-        double sampling;
-        int nx,ny,nz;
-        Coord pmin,pmax;
+        double      scale;
+        double      sampling;
+        int         nx,ny,nz;
+        Coord       pmin,pmax;
         bool operator==(const DistanceGridParams& v) const ;
         bool operator<(const DistanceGridParams& v) const ;
         bool operator>(const DistanceGridParams& v) const ;
     };
 
     static std::map<DistanceGridParams, DistanceGrid*>& getShared();
+
+private:
+    /// Fast Marching Method Update
+    enum Status { FMM_FRONT0 = 0, FMM_FAR = -1, FMM_KNOWN_OUT = -2, FMM_KNOWN_IN = -3 };
+    helper::vector<int> fmm_status;
+    helper::vector<int> fmm_heap;
+    int                 fmm_heap_size;
+
+    int  fmm_pop();
+    void fmm_push(int index);
+    void fmm_swap(int entry1, int entry2);
+
 };
 
 } // namespace _distancegrid

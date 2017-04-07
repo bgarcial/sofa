@@ -42,6 +42,14 @@ namespace component
 
 namespace collision
 {
+
+namespace _ffddistancegriddiscreteinteraction_
+{
+
+using sofa::component::collision::FFDDistanceGridCollisionElement;
+using sofa::component::collision::RigidDistanceGridCollisionModel;
+using sofa::component::collision::RigidDistanceGridCollisionElement;
+
 class SOFA_VOLUMETRIC_DATA_API FFDDistanceGridDiscreteIntersection : public core::collision::BaseIntersector
 {
 
@@ -69,6 +77,10 @@ protected:
     DiscreteIntersection* intersection;
 
 };
+
+} // namespace _ffddistancegriddiscreteintersection_
+
+using _ffddistancegriddiscreteinteraction_::FFDDistanceGridDiscreteIntersection;
 
 } // namespace collision
 
